@@ -56,7 +56,6 @@ public class CodeInputView extends View {
 	private float mReduction;
 	private float mTextSize;
 	private float mTextMarginBottom;
-	private int mHeight;
 	private int mUnderlineAmount;
 	private int mUnderlineColor;
 	private int mUnderlineSelectedColor;
@@ -208,7 +207,6 @@ public class CodeInputView extends View {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		mUnderLineY = (int) (mTextMarginBottom + mTextPaint.getFontSpacing());
-		mHeight = h;
 		mXOffset = (int) Math.abs(w - (mUnderlineAmount * mUnderlineWidth)) / 2;
 		initUnderline();
 	}
@@ -222,7 +220,8 @@ public class CodeInputView extends View {
 			width = Math.min((int) desiredWidth, width);
 		}
 		if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
-			float desiredHeight = mErrorTextPaint.getFontSpacing() + mErrorTextMarginTop + mTextPaint.getFontSpacing() + mTextMarginBottom;
+			float desiredHeight = mErrorTextPaint.getFontSpacing() + mErrorTextPaint.getFontMetrics().bottom +
+					mErrorTextMarginTop + mTextPaint.getFontSpacing() + mTextMarginBottom;
 			height = Math.min((int) desiredHeight, height);
 		}
 		setMeasuredDimension(width, height);
@@ -414,10 +413,7 @@ public class CodeInputView extends View {
 		float actualWidth = toX - fromX;
 		float centerWidth = actualWidth / 2;
 		float centerX = fromX + centerWidth;
-		canvas.drawText(character.toString(), centerX, (mHeight - mTextMarginBottom - mErrorTextMarginTop -
-						mErrorTextPaint.getFontSpacing()) +
-						mCharactersBaseline,
-				mTextPaint);
+		canvas.drawText(character.toString(), centerX, (mUnderLineY - mTextMarginBottom) + mCharactersBaseline, mTextPaint);
 	}
 
 	/**
