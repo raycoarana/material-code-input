@@ -10,6 +10,7 @@ Based on
 ----------
 
 [Code input field concept](http://www.materialup.com/posts/code-input-field-concept) by [SAMUEL KANTALA](http://www.materialup.com/ontidop)
+
 [Code input lib](https://github.com/glomadrian/material-code-input) by [Adrián García Lomas](https://github.com/glomadrian)
 
 
@@ -31,7 +32,7 @@ Usage with default colors (default digits are 6) without finish animation
 Usage with custom colors and attributes using a numeric only input
 
 ```xml
-<com.github.glomadrian.codeinputlib.CodeInputView
+<com.raycoarana.codeinputview.CodeInputView
     android:layout_marginTop="20dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -74,7 +75,7 @@ For Gradle
 
 Add dependency
 ```java
-  compile 'com.raycoarana.codeinputview:codeinputview:1.0.0'
+compile 'com.raycoarana.codeinputview:codeinputview:1.0.0'
 ```
 
 
