@@ -82,6 +82,7 @@ compile 'com.raycoarana.codeinputview:codeinputview:1.0.0'
 Developed By
 ------------
 Adrián García Lomas - <glomadrian@gmail.com>
+
 Rayco Araña - <me@raycoarana.com>
 
 License
