@@ -12,6 +12,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.support.annotation.ColorRes;
 import android.support.annotation.StringRes;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -100,21 +103,30 @@ public class CodeInputView extends View {
 	}
 
 	private void initDefaultAttributes() {
-		mUnderlineColor = getContext().getResources().getColor(R.color.underline_default_color);
+		mUnderlineColor = getColor(R.color.underline_default_color);
 		mUnderlineWidth = getContext().getResources().getDimension(R.dimen.underline_width);
 		mUnderlineStrokeWidth = getContext().getResources().getDimension(R.dimen.underline_stroke_width);
-		mUnderlineSelectedColor = getContext().getResources().getColor(R.color.underline_selected_color);
+		mUnderlineSelectedColor = getColor(R.color.underline_selected_color);
 		mUnderlineSelectedStrokeWidth = getContext().getResources().getDimension(R.dimen.underline_selected_stroke_width);
 		mUnderlineErrorStrokeWidth = getContext().getResources().getDimension(R.dimen.underline_error_stroke_width);
 		mUnderlineReduction = getContext().getResources().getDimension(R.dimen.section_reduction);
 		mUnderlineAmount = DEFAULT_CODES;
-		mTextColor = getContext().getResources().getColor(R.color.text_color);
+		mTextColor = getColor(R.color.text_color);
 		mTextSize = getContext().getResources().getDimension(R.dimen.text_size);
 		mTextMarginBottom = getContext().getResources().getDimension(R.dimen.text_margin_bottom);
-		mErrorColor = getContext().getResources().getColor(R.color.error_color);
+		mErrorColor = getColor(R.color.error_color);
 		mErrorTextSize = getContext().getResources().getDimension(R.dimen.error_text_size);
 		mErrorTextMarginTop = getContext().getResources().getDimension(R.dimen.error_text_margin_top);
 		mReduction = mUnderlineReduction;
+	}
+
+	@SuppressWarnings("deprecation")
+	private int getColor(@ColorRes int resId) {
+		if (VERSION.SDK_INT < VERSION_CODES.M) {
+			return getContext().getResources().getColor(resId);
+		} else {
+			return getContext().getResources().getColor(resId, null);
+		}
 	}
 
 	private void initCustomAttributes(AttributeSet attributeset) {
@@ -341,7 +353,7 @@ public class CodeInputView extends View {
 	/**
 	 * Adds a listener that will be fired once the user complete all the code characters
 	 *
-	 * @param listener
+	 * @param listener listener to add
 	 */
 	public void addInputCodeCompletedListener(InputCodeCompletedListener listener) {
 		mInputCompletedListeners.add(listener);
