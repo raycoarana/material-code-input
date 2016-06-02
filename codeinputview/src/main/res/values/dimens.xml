@@ -1,0 +1,11 @@
+<resources>
+  <dimen name="underline_stroke_width">1dp</dimen>
+  <dimen name="underline_selected_stroke_width">2dp</dimen>
+  <dimen name="underline_error_stroke_width">2dp</dimen>
+  <dimen name="underline_width">35dp</dimen>
+  <dimen name="section_reduction">8dp</dimen>
+  <dimen name="text_size">30sp</dimen>
+  <dimen name="text_margin_bottom">4dp</dimen>
+  <dimen name="error_text_size">12sp</dimen>
+  <dimen name="error_text_margin_top">4dp</dimen>
+</resources>

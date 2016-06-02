@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <declare-styleable name="code_input_view">
+    <attr name="underline_color" format="color"/>
+    <attr name="underline_selected_color" format="color"/>
+    <attr name="underline_width" format="dimension"/>
+    <attr name="underline_stroke_width" format="dimension"/>
+    <attr name="underline_selected_stroke_width" format="dimension"/>
+    <attr name="underline_error_stroke_width" format="dimension"/>
+    <attr name="underline_section_reduction" format="dimension"/>
+    <attr name="text_color" format="color"/>
+    <attr name="text_size" format="dimension"/>
+    <attr name="text_margin_bottom" format="dimension"/>
+    <attr name="error_color" format="color"/>
+    <attr name="error_text_size" format="dimension"/>
+    <attr name="error_text_margin_top" format="dimension"/>
+    <attr name="codes" format="integer"/>
+    <attr name="animate_on_complete" format="boolean"/>
+    <attr name="input_type" format="enum">
+      <enum name="text" value="1" />
+      <enum name="numeric" value="2" />
+    </attr>
+  </declare-styleable>
+</resources>

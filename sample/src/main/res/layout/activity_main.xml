@@ -1,0 +1,48 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  xmlns:app="http://schemas.android.com/apk/res-auto"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:orientation="vertical"
+			  android:padding="10dp"
+			  android:background="#FFF">
+
+	<com.raycoarana.codeinputview.CodeInputView
+			android:id="@+id/pairing"
+			android:layout_marginTop="20dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:animate_on_complete="false"/>
+
+	<com.raycoarana.codeinputview.CodeInputView
+			android:id="@+id/with_complete_callback"
+			android:layout_marginTop="20dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:underline_width="40dp"
+			app:underline_stroke_width="1dp"
+			app:underline_selected_stroke_width="2dp"
+			app:underline_error_stroke_width="2dp"
+			app:text_size="24sp"
+			app:input_type="numeric"
+			app:codes="4"/>
+
+	<com.raycoarana.codeinputview.CodeInputView
+			android:layout_marginTop="20dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:underline_color="#d19385"
+			app:underline_selected_color="#ce3a47"
+			app:text_color="#5c282c"
+			app:input_type="text"
+			app:codes="8"/>
+
+	<com.raycoarana.codeinputview.CodeInputView
+			android:layout_marginTop="20dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:underline_color="#03A9F4"
+			app:underline_selected_color="#3F51B5"
+			app:text_color="#212121"
+			app:codes="10"/>
+
+</LinearLayout>

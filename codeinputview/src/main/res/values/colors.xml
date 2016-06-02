@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="underline_default_color">#DDD</color>
+  <color name="underline_selected_color">#0ada7c</color>
+  <color name="error_color">#FF0000</color>
+  <color name="text_color">#000</color>
+</resources>
