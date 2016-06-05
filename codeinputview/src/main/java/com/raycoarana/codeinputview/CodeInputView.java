@@ -309,6 +309,7 @@ public class CodeInputView extends View {
 			char character = matcher.group(1).charAt(0);
 			if (mCharacters.size() < mUnderlineAmount) {
 				mCharacters.push(character);
+				invalidate();
 				if (mCharacters.size() == mUnderlineAmount) {
 					dispatchComplete();
 				}
@@ -387,7 +388,6 @@ public class CodeInputView extends View {
 			drawSection(i, fromX, fromY, toX, toY, canvas);
 		}
 		drawErrorMessage(canvas);
-		invalidate();
 	}
 
 	private void drawErrorMessage(Canvas canvas) {
@@ -443,6 +443,7 @@ public class CodeInputView extends View {
 		for (char item : code.toCharArray()) {
 			mCharacters.add(item);
 		}
+		invalidate();
 	}
 
 	/**
@@ -499,6 +500,7 @@ public class CodeInputView extends View {
 
 		public void onAnimationUpdate(ValueAnimator valueanimator) {
 			mReduction = (Float) valueanimator.getAnimatedValue();
+			invalidate();
 		}
 	}
 
@@ -509,6 +511,7 @@ public class CodeInputView extends View {
 
 		public void onAnimationUpdate(ValueAnimator valueanimator) {
 			mCharactersBaseline = (Float) valueanimator.getAnimatedValue();
+			invalidate();
 		}
 	}
 
@@ -520,6 +523,7 @@ public class CodeInputView extends View {
 		public void onAnimationUpdate(ValueAnimator animation) {
 			int color = (Integer) animation.getAnimatedValue();
 			mUnderlinePaint.setColor(color);
+			invalidate();
 		}
 	}
 
@@ -530,6 +534,7 @@ public class CodeInputView extends View {
 		@Override
 		public void onAnimationUpdate(ValueAnimator animation) {
 			mErrorTextPaint.setAlpha((Integer) animation.getAnimatedValue());
+			invalidate();
 		}
 	}
 }
