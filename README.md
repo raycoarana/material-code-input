@@ -1,9 +1,9 @@
 Material Code input
 -----------------
 
-A material style input for put codes
+A material style input to put security codes like those two factor authentication codes received by SMS.
 
-![Demo Screenshot][1]
+![Demo Screenshot](./art/CodeInputView.gif)
 
 
 Based on
@@ -58,6 +58,7 @@ Get the input code as String
 ```java
   codeInputView.getCode()
 ```
+
 Set a default code
 
 ```java
@@ -75,20 +76,12 @@ For Gradle
 
 Add dependency
 ```java
-compile 'com.raycoarana.codeinputview:codeinputview:1.0.0'
+compile 'com.raycoarana.codeinputview:codeinputview:1.0.1'
 ```
-
-
-Developed By
-------------
-Adrián García Lomas - <glomadrian@gmail.com>
-
-Rayco Araña - <me@raycoarana.com>
 
 License
 -------
 
-    Copyright 2015 Adrián García Lomas
     Copyright 2016 Rayco Araña
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -103,4 +96,3 @@ License
     See the License for the specific language governing permissions and
     limitations under the License.
 
-[1]: ./art/CodeInputView.gif
