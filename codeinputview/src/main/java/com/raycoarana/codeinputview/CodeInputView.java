@@ -141,9 +141,9 @@ public class CodeInputView extends View {
 		mUnderlineReduction = attributes.getDimension(R.styleable.code_input_view_underline_section_reduction, mUnderlineReduction);
 		mUnderlineAmount = attributes.getInt(R.styleable.code_input_view_codes, mUnderlineAmount);
 		mInputType = attributes.getInt(R.styleable.code_input_view_input_type, mInputType);
-		mTextColor = attributes.getInt(R.styleable.code_input_view_text_color, mTextColor);
-		mTextSize = attributes.getDimension(R.styleable.code_input_view_text_size, mTextSize);
-		mTextMarginBottom = attributes.getDimension(R.styleable.code_input_view_text_margin_bottom, mTextMarginBottom);
+		mTextColor = attributes.getInt(R.styleable.code_input_view_code_text_color, mTextColor);
+		mTextSize = attributes.getDimension(R.styleable.code_input_view_code_text_size, mTextSize);
+		mTextMarginBottom = attributes.getDimension(R.styleable.code_input_view_code_text_margin_bottom, mTextMarginBottom);
 		mErrorColor = attributes.getInt(R.styleable.code_input_view_error_color, mErrorColor);
 		mErrorTextSize = attributes.getDimension(R.styleable.code_input_view_error_text_size, mErrorTextSize);
 		mErrorTextMarginTop = attributes.getDimension(R.styleable.code_input_view_error_text_margin_top, mErrorTextMarginTop);

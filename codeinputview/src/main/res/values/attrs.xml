@@ -8,9 +8,9 @@
     <attr name="underline_selected_stroke_width" format="dimension"/>
     <attr name="underline_error_stroke_width" format="dimension"/>
     <attr name="underline_section_reduction" format="dimension"/>
-    <attr name="text_color" format="color"/>
-    <attr name="text_size" format="dimension"/>
-    <attr name="text_margin_bottom" format="dimension"/>
+    <attr name="code_text_color" format="color"/>
+    <attr name="code_text_size" format="dimension"/>
+    <attr name="code_text_margin_bottom" format="dimension"/>
     <attr name="error_color" format="color"/>
     <attr name="error_text_size" format="dimension"/>
     <attr name="error_text_margin_top" format="dimension"/>

@@ -22,7 +22,7 @@
 			app:underline_stroke_width="1dp"
 			app:underline_selected_stroke_width="2dp"
 			app:underline_error_stroke_width="2dp"
-			app:text_size="24sp"
+			app:code_text_size="24sp"
 			app:input_type="numeric"
 			app:codes="4"/>
 
@@ -32,7 +32,7 @@
 			android:layout_height="wrap_content"
 			app:underline_color="#d19385"
 			app:underline_selected_color="#ce3a47"
-			app:text_color="#5c282c"
+			app:code_text_color="#5c282c"
 			app:input_type="text"
 			app:codes="8"/>
 
@@ -42,7 +42,7 @@
 			android:layout_height="wrap_content"
 			app:underline_color="#03A9F4"
 			app:underline_selected_color="#3F51B5"
-			app:text_color="#212121"
+			app:code_text_color="#212121"
 			app:codes="10"/>
 
 </LinearLayout>
