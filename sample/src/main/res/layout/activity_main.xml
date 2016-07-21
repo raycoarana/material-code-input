@@ -24,7 +24,7 @@
 			app:underline_error_stroke_width="2dp"
 			app:code_text_size="24sp"
 			app:input_type="numeric"
-			app:codes="4"/>
+			app:length_of_code="4"/>
 
 	<com.raycoarana.codeinputview.CodeInputView
 			android:layout_marginTop="20dp"
@@ -34,7 +34,7 @@
 			app:underline_selected_color="#ce3a47"
 			app:code_text_color="#5c282c"
 			app:input_type="text"
-			app:codes="8"/>
+			app:length_of_code="8"/>
 
 	<com.raycoarana.codeinputview.CodeInputView
 			android:layout_marginTop="20dp"
@@ -43,6 +43,6 @@
 			app:underline_color="#03A9F4"
 			app:underline_selected_color="#3F51B5"
 			app:code_text_color="#212121"
-			app:codes="10"/>
+			app:length_of_code="10"/>
 
 </LinearLayout>

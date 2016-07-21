@@ -38,10 +38,10 @@ Usage with custom colors and attributes using a numeric only input
     android:layout_height="wrap_content"
     app:underline_color="#457ad1"
     app:underline_selected_color="#9e1ace"
-    app:text_color="#b12eff"
+    app:code_text_color="#b12eff"
     app:error_color="#77ce9d"
     app:input_type="numeric"
-    app:codes="4"
+    app:length_of_code="4"
     />
 ```
 
@@ -76,7 +76,7 @@ For Gradle
 
 Add dependency
 ```java
-compile 'com.raycoarana.codeinputview:codeinputview:1.0.2'
+compile 'com.raycoarana.codeinputview:codeinputview:1.1.0'
 ```
 
 License

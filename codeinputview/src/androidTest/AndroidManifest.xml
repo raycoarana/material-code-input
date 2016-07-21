@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.raycoarana.codeinputview">
+
+    <application>
+        <activity
+            android:name="android.support.v7.app.AppCompatActivity"
+            android:theme="@style/Theme.AppCompat" />
+    </application>
+</manifest>

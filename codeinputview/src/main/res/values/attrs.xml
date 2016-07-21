@@ -14,8 +14,9 @@
     <attr name="error_color" format="color"/>
     <attr name="error_text_size" format="dimension"/>
     <attr name="error_text_margin_top" format="dimension"/>
-    <attr name="codes" format="integer"/>
+    <attr name="length_of_code" format="integer"/>
     <attr name="animate_on_complete" format="boolean"/>
+    <attr name="on_complete_delay" format="integer"/>
     <attr name="input_type" format="enum">
       <enum name="text" value="1" />
       <enum name="numeric" value="2" />

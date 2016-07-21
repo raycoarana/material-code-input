@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.raycoarana.codeinputview.CodeInputView;
-import com.raycoarana.codeinputview.InputCodeCompletedListener;
+import com.raycoarana.codeinputview.OnCodeCompleteListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 
 		final CodeInputView otherCodeInput = (CodeInputView) findViewById(R.id.pairing);
-		otherCodeInput.addInputCodeCompletedListener(new InputCodeCompletedListener() {
+		otherCodeInput.addOnCompleteListener(new OnCodeCompleteListener() {
 			@Override
 			public void onCompleted(String code) {
 				mHandler.postDelayed(new Runnable() {
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 		codeInputView.setCode("23");
 
 		//Action to do when completed
-		codeInputView.addInputCodeCompletedListener(new InputCodeCompletedListener() {
+		codeInputView.addOnCompleteListener(new OnCodeCompleteListener() {
 			@Override
 			public void onCompleted(String code) {
 				Toast.makeText(MainActivity.this, "Your code: " + code, Toast.LENGTH_SHORT).show();
