@@ -212,11 +212,11 @@ public class CodeInputView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
-        if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.AT_MOST) {
+        if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
             float desiredWidth = mLengthOfCode * mUnderlineWidth;
             width = Math.min((int) desiredWidth, width);
         }
-        if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.AT_MOST) {
+        if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
             float desiredHeight = mErrorTextPaint.getFontSpacing() + mErrorTextPaint.getFontMetrics().bottom +
                     mErrorTextMarginTop + mTextPaint.getFontSpacing() + mTextMarginBottom;
             height = Math.min((int) desiredHeight, height);

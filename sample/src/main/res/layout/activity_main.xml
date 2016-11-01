@@ -26,7 +26,11 @@
 			app:input_type="numeric"
 			app:length_of_code="4"/>
 
-	<com.raycoarana.codeinputview.CodeInputView
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<com.raycoarana.codeinputview.CodeInputView
 			android:layout_marginTop="20dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -35,6 +39,7 @@
 			app:code_text_color="#5c282c"
 			app:input_type="text"
 			app:length_of_code="8"/>
+	</FrameLayout>
 
 	<com.raycoarana.codeinputview.CodeInputView
 			android:layout_marginTop="20dp"
