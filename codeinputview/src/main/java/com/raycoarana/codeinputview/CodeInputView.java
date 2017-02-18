@@ -204,7 +204,6 @@ public class CodeInputView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mUnderLineY = (int) (mTextMarginBottom + mTextPaint.getFontSpacing());
-        mXOffset = (int) Math.abs(w - (mLengthOfCode * mUnderlineWidth)) / 2;
         initUnderline();
     }
 
@@ -228,6 +227,8 @@ public class CodeInputView extends View {
         for (int i = 0; i < mLengthOfCode; i++) {
             mUnderlines[i] = createPath(i, mUnderlineWidth);
         }
+        mXOffset = (int) Math.abs(getWidth() - (mLengthOfCode * mUnderlineWidth)) / 2;
+
     }
 
     private Underline createPath(int position, float sectionWidth) {
