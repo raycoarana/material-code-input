@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.ColorRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -224,11 +225,10 @@ public class CodeInputView extends View {
     }
 
     private void initUnderline() {
+        mXOffset = (int) Math.abs(getWidth() - (mLengthOfCode * mUnderlineWidth)) / 2;
         for (int i = 0; i < mLengthOfCode; i++) {
             mUnderlines[i] = createPath(i, mUnderlineWidth);
         }
-        mXOffset = (int) Math.abs(getWidth() - (mLengthOfCode * mUnderlineWidth)) / 2;
-
     }
 
     private Underline createPath(int position, float sectionWidth) {
@@ -249,7 +249,7 @@ public class CodeInputView extends View {
                 outAttrs.inputType = InputType.TYPE_CLASS_NUMBER;
                 break;
             case INPUT_TYPE_TEXT:
-                outAttrs.inputType = InputType.TYPE_CLASS_TEXT;
+                outAttrs.inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
                 break;
         }
         return new BaseInputConnection(this, false) {
@@ -496,6 +496,17 @@ public class CodeInputView extends View {
         }
         mErrorMessage = errorMessage;
         invalidate();
+    }
+
+
+    /**
+     * Return the current error message, if any
+     *
+     * @return return the current message
+     */
+    @Nullable
+    public String getError() {
+        return mErrorMessage;
     }
 
     /**
