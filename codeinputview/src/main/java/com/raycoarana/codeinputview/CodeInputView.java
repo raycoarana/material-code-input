@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.support.annotation.ColorRes;
@@ -90,12 +91,12 @@ public class CodeInputView extends View {
     }
 
     private void init(AttributeSet attributeset) {
+        initViewOptions();
         initDefaultAttributes();
         initCustomAttributes(attributeset);
         initDataStructures();
         initPaint();
         initAnimator();
-        initViewOptions();
     }
 
     private void initDefaultAttributes() {
@@ -199,6 +200,19 @@ public class CodeInputView extends View {
     private void initViewOptions() {
         setFocusable(true);
         setFocusableInTouchMode(true);
+    }
+
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
+        if (gainFocus) {
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showKeyboard();
+                }
+            }, 100);
+        }
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
     }
 
     @Override
