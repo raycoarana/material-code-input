@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,6 +40,8 @@ public class CodeInputView extends View {
 
     private static final int ANIMATION_DURATION = 500;
     private static final int DISPATCH_COMPLETE_EVENT_DELAY = 200;
+
+    private static final String TAG = "CodeInputView";
 
     private FixedStack<Character> mCharacters;
     private Underline mUnderlines[];
@@ -464,7 +467,8 @@ public class CodeInputView extends View {
      */
     public void setCode(String code) {
         if (code.length() > mLengthOfCode) {
-            throw new IllegalArgumentException("Code length is bigger that codes count");
+            Log.e(TAG, "Code length is bigger that codes count");
+            return;
         }
 
         mCharacters.clear();
