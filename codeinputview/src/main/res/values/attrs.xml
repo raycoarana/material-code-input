@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <declare-styleable name="code_input_view">
+  <declare-styleable name="CodeInputView">
     <attr name="underline_color" format="color"/>
     <attr name="underline_selected_color" format="color"/>
     <attr name="underline_width" format="dimension"/>

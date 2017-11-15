@@ -16,10 +16,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:27.0.0'
+    compile 'com.android.support:appcompat-v7:27.0.1'
 
     androidTestCompile 'com.android.support.test:runner:1.0.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'

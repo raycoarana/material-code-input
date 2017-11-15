@@ -56,19 +56,24 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 Get the input code as String
 
 ```java
-  codeInputView.getCode()
+  codeInputView.getCode();
 ```
 
 Set a default code
 
 ```java
-  codeInputView.setCode("1234")
+  codeInputView.setCode("1234");
 ```
 
 Show an error when the code is not valid
 
 ```java
-  codeInputView.setError("Ups! Try with other code.")
+  codeInputView.setError("Ups! Try with other code.");
+```
+
+Password mode to hide the code
+```java
+  codeInputView.setPasswordMode(true);
 ```
 
 For Gradle
@@ -76,7 +81,7 @@ For Gradle
 
 Add dependency
 ```java
-compile 'com.raycoarana.codeinputview:codeinputview:1.1.3'
+compile 'com.raycoarana.codeinputview:codeinputview:1.2.0'
 ```
 
 License
