@@ -19,9 +19,8 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:27.0.1'
-    compile 'com.android.support:support-annotations:27.0.1'
+    compile 'com.android.support:appcompat-v7:25.3.0'
 
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
