@@ -77,8 +77,9 @@ public class CodeInputView extends View {
     private int mXOffset;
     private boolean mAnimateOnComplete;
     private int mOnCompleteEventDelay;
-    private boolean mPasswordMode;
+    private boolean mInPasswordMode;
     private char mPasswordCharacter = '\u2022';
+    private boolean mShowKeyboard = true;
 
     public CodeInputView(Context context) {
         super(context);
@@ -152,6 +153,13 @@ public class CodeInputView extends View {
         mErrorTextMarginTop = attributes.getDimension(R.styleable.CodeInputView_error_text_margin_top, mErrorTextMarginTop);
         mAnimateOnComplete = attributes.getBoolean(R.styleable.CodeInputView_animate_on_complete, true);
         mOnCompleteEventDelay = attributes.getInteger(R.styleable.CodeInputView_on_complete_delay, DISPATCH_COMPLETE_EVENT_DELAY);
+        mShowKeyboard = attributes.getBoolean(R.styleable.CodeInputView_show_keyboard, mShowKeyboard);
+        mInPasswordMode = attributes.getBoolean(R.styleable.CodeInputView_password_mode, mInPasswordMode);
+
+        String passwordChar = attributes.getString(R.styleable.CodeInputView_password_character);
+        if (passwordChar != null && passwordChar.length() == 1) {
+            mPasswordCharacter = passwordChar.charAt(0);
+        }
         attributes.recycle();
     }
 
@@ -256,6 +264,10 @@ public class CodeInputView extends View {
     }
 
     private void showKeyboard() {
+        if (!mShowKeyboard) {
+            return;
+        }
+
         InputMethodManager inputmethodmanager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputmethodmanager != null) {
             inputmethodmanager.showSoftInput(this, InputMethodManager.RESULT_UNCHANGED_SHOWN);
@@ -426,7 +438,7 @@ public class CodeInputView extends View {
             if (mCharacters.size() > i && mCharacters.size() != 0) {
                 canvas.save();
                 canvas.clipRect(0, 0, toX, toY);
-                char charToDraw = mPasswordMode ? mPasswordCharacter : mCharacters.get(i);
+                char charToDraw = mInPasswordMode ? mPasswordCharacter : mCharacters.get(i);
                 drawCharacter(fromX, toX, charToDraw, canvas);
                 canvas.restore();
             }
@@ -578,8 +590,8 @@ public class CodeInputView extends View {
      * @return true when it is hiding the code or false when it is displaying it.
      */
     @SuppressWarnings("unused")
-    public boolean isInPasswordMode() {
-        return mPasswordMode;
+    public boolean getInPasswordMode() {
+        return mInPasswordMode;
     }
 
     /**
@@ -590,8 +602,8 @@ public class CodeInputView extends View {
      * @param enabled true to hide the code or false the display it.
      */
     @SuppressWarnings("SameParameterValue")
-    public void setPasswordMode(boolean enabled) {
-        mPasswordMode = enabled;
+    public void setInPasswordMode(boolean enabled) {
+        mInPasswordMode = enabled;
 
         invalidate();
     }
@@ -615,6 +627,27 @@ public class CodeInputView extends View {
     @SuppressWarnings("unused")
     public void setPasswordCharacter(char passwordCharacter) {
         this.mPasswordCharacter = passwordCharacter;
+    }
+
+    /**
+     * Return if the OS keyboard should be shown when the view gain focus or the user tap on it
+     *
+     * @return true if the OS keyboard should be shown or false in case it is not
+     */
+    @SuppressWarnings("unused")
+    public boolean getShowKeyBoard() {
+        return mShowKeyboard;
+    }
+
+    /**
+     * Set if the OS keyboard should be shown when the view gain focus or the user tap on it
+     *
+     * @param value true to show the keyboard when focus gained or tapped, false to not show it
+     */
+    @SuppressWarnings("SameParameterValue")
+    public void setShowKeyboard(boolean value) {
+        mShowKeyboard = value;
+        invalidate();
     }
 
     /**

@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
 		//Default value
 		codeInputView.setCode("23");
-		codeInputView.setPasswordMode(true);
+		codeInputView.setInPasswordMode(true);
 
 		//Action to do when completed
 		codeInputView.addOnCompleteListener(new OnCodeCompleteListener() {

@@ -21,5 +21,8 @@
       <enum name="text" value="1" />
       <enum name="numeric" value="2" />
     </attr>
+    <attr name="password_mode" format="boolean"/>
+    <attr name="password_character" format="string"/>
+    <attr name="show_keyboard" format="boolean"/>
   </declare-styleable>
 </resources>
