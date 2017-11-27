@@ -12,6 +12,7 @@
     <attr name="code_text_size" format="dimension"/>
     <attr name="code_text_margin_bottom" format="dimension"/>
     <attr name="error_color" format="color"/>
+    <attr name="error_text_color" format="color"/>
     <attr name="error_text_size" format="dimension"/>
     <attr name="error_text_margin_top" format="dimension"/>
     <attr name="length_of_code" format="integer"/>

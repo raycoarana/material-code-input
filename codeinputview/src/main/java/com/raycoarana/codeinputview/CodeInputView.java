@@ -71,6 +71,7 @@ public class CodeInputView extends View {
     private float mCharactersBaseline;
     private String mErrorMessage;
     private int mErrorColor;
+    private int mErrorTextColor;
     private float mErrorTextSize;
     private float mErrorTextMarginTop;
     private Paint mErrorTextPaint;
@@ -118,6 +119,7 @@ public class CodeInputView extends View {
         mTextSize = getContext().getResources().getDimension(R.dimen.text_size);
         mTextMarginBottom = getContext().getResources().getDimension(R.dimen.text_margin_bottom);
         mErrorColor = getColor(R.color.error_color);
+        mErrorTextColor = getColor(R.color.error_color);
         mErrorTextSize = getContext().getResources().getDimension(R.dimen.error_text_size);
         mErrorTextMarginTop = getContext().getResources().getDimension(R.dimen.error_text_margin_top);
         mReduction = mUnderlineReduction;
@@ -149,6 +151,7 @@ public class CodeInputView extends View {
         mTextSize = attributes.getDimension(R.styleable.CodeInputView_code_text_size, mTextSize);
         mTextMarginBottom = attributes.getDimension(R.styleable.CodeInputView_code_text_margin_bottom, mTextMarginBottom);
         mErrorColor = attributes.getInt(R.styleable.CodeInputView_error_color, mErrorColor);
+        mErrorTextColor = attributes.getInt(R.styleable.CodeInputView_error_text_color, mErrorTextColor);
         mErrorTextSize = attributes.getDimension(R.styleable.CodeInputView_error_text_size, mErrorTextSize);
         mErrorTextMarginTop = attributes.getDimension(R.styleable.CodeInputView_error_text_margin_top, mErrorTextMarginTop);
         mAnimateOnComplete = attributes.getBoolean(R.styleable.CodeInputView_animate_on_complete, true);
@@ -185,7 +188,7 @@ public class CodeInputView extends View {
         mTextPaint.setTextAlign(Paint.Align.CENTER);
         mErrorTextPaint = new Paint();
         mErrorTextPaint.setTextSize(mErrorTextSize);
-        mErrorTextPaint.setColor(mErrorColor);
+        mErrorTextPaint.setColor(mErrorTextColor);
         mErrorTextPaint.setAntiAlias(true);
         mErrorTextPaint.setTextAlign(Paint.Align.CENTER);
 
