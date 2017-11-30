@@ -13,6 +13,8 @@
 			android:layout_height="wrap_content"
 			app:animate_on_complete="false"
 			app:show_keyboard="false"
+			app:time_character_is_shown_while_typing="500"
+			app:show_password_while_typing="true"
 			app:password_character="\u2022"
 			app:password_mode="true">
 		<requestFocus/>

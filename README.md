@@ -81,7 +81,7 @@ For Gradle
 
 Add dependency
 ```java
-compile 'com.raycoarana.codeinputview:codeinputview:1.2.0'
+compile 'com.raycoarana.codeinputview:codeinputview:1.2.5'
 ```
 
 License

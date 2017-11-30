@@ -30,6 +30,7 @@ import com.raycoarana.codeinputview.model.Underline;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CodeInputView extends View {
 
@@ -40,6 +41,7 @@ public class CodeInputView extends View {
 
     private static final int ANIMATION_DURATION = 500;
     private static final int DISPATCH_COMPLETE_EVENT_DELAY = 200;
+    private static final int DEFAULT_TIME_CHARACTER_IS_SHOWN_WHILE_TYPING = 200;
 
     private static final String TAG = "CodeInputView";
 
@@ -79,8 +81,12 @@ public class CodeInputView extends View {
     private boolean mAnimateOnComplete;
     private int mOnCompleteEventDelay;
     private boolean mInPasswordMode;
+    private boolean mShowPasswordWhileTyping;
     private char mPasswordCharacter = '\u2022';
     private boolean mShowKeyboard = true;
+    private long mTimeCharacterIsShownWhileTypingInNano;
+    private int mTimeCharacterIsShownWhileTypingInMillis = DEFAULT_TIME_CHARACTER_IS_SHOWN_WHILE_TYPING;
+    private long mLastTimeTypedInNano;
 
     public CodeInputView(Context context) {
         super(context);
@@ -158,6 +164,9 @@ public class CodeInputView extends View {
         mOnCompleteEventDelay = attributes.getInteger(R.styleable.CodeInputView_on_complete_delay, DISPATCH_COMPLETE_EVENT_DELAY);
         mShowKeyboard = attributes.getBoolean(R.styleable.CodeInputView_show_keyboard, mShowKeyboard);
         mInPasswordMode = attributes.getBoolean(R.styleable.CodeInputView_password_mode, mInPasswordMode);
+        mShowPasswordWhileTyping = attributes.getBoolean(R.styleable.CodeInputView_show_password_while_typing, mShowPasswordWhileTyping);
+        mTimeCharacterIsShownWhileTypingInMillis = attributes.getInt(R.styleable.CodeInputView_time_character_is_shown_while_typing, mTimeCharacterIsShownWhileTypingInMillis);
+        mTimeCharacterIsShownWhileTypingInNano = TimeUnit.MILLISECONDS.toNanos(mTimeCharacterIsShownWhileTypingInMillis);
 
         String passwordChar = attributes.getString(R.styleable.CodeInputView_password_character);
         if (passwordChar != null && passwordChar.length() == 1) {
@@ -302,6 +311,7 @@ public class CodeInputView extends View {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyevent) {
         if (keyCode == KeyEvent.KEYCODE_DEL) {
+            mLastTimeTypedInNano = 0;
             deleteCharacter();
         }
         return super.onKeyDown(keyCode, keyevent);
@@ -341,6 +351,13 @@ public class CodeInputView extends View {
 
         if (mIsEditable && isValid && mCharacters.size() < mLengthOfCode) {
             mCharacters.push(typedChar);
+            mLastTimeTypedInNano = System.nanoTime();
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    invalidate();
+                }
+            }, mTimeCharacterIsShownWhileTypingInMillis);
             invalidate();
             if (mCharacters.size() == mLengthOfCode) {
                 dispatchComplete();
@@ -441,7 +458,8 @@ public class CodeInputView extends View {
             if (mCharacters.size() > i && mCharacters.size() != 0) {
                 canvas.save();
                 canvas.clipRect(0, 0, toX, toY);
-                char charToDraw = mInPasswordMode ? mPasswordCharacter : mCharacters.get(i);
+                boolean canBeShown = mCharacters.size() - 1 == i && mShowPasswordWhileTyping && System.nanoTime() - mLastTimeTypedInNano < mTimeCharacterIsShownWhileTypingInNano;
+                char charToDraw = (mInPasswordMode && !canBeShown) ? mPasswordCharacter : mCharacters.get(i);
                 drawCharacter(fromX, toX, charToDraw, canvas);
                 canvas.restore();
             }
@@ -607,6 +625,56 @@ public class CodeInputView extends View {
     @SuppressWarnings("SameParameterValue")
     public void setInPasswordMode(boolean enabled) {
         mInPasswordMode = enabled;
+
+        invalidate();
+    }
+
+    /**
+     * Get if the password is shown while the user is typing for some time or until the next
+     * character type
+     *
+     * @return true when it is showing the password while typing or false if not
+     */
+    @SuppressWarnings("unused")
+    public boolean getShowPasswordWhileTyping() {
+        return mShowPasswordWhileTyping;
+    }
+
+    /**
+     * Enables or disables showing the last typed character while typing for some time or until
+     * the next character is typed
+     * ShowPasswordWhileTyping is disabled by default.
+     *
+     * @param enabled true to show password while typing or false to not show never
+     */
+    @SuppressWarnings("SameParameterValue")
+    public void setShowPasswordWhileTyping(boolean enabled) {
+        mShowPasswordWhileTyping = enabled;
+
+        invalidate();
+    }
+
+    /**
+     * Get time in milliseconds that the last character is shown when showPasswordWhileTyping is
+     * enabled
+     *
+     * @return the time in milliseconds
+     */
+    @SuppressWarnings("unused")
+    public int getTimeCharacterIsShownWhileTyping() {
+        return mTimeCharacterIsShownWhileTypingInMillis;
+    }
+
+    /**
+     * Set time in milliseconds that the last character is shown when showPasswordWhileTyping is
+     * enabled.
+     *
+     * @param timeInMillis true to hide the code or false the display it.
+     */
+    @SuppressWarnings("SameParameterValue")
+    public void setTimeCharacterIsShownWhileTyping(int timeInMillis) {
+        mTimeCharacterIsShownWhileTypingInMillis = timeInMillis;
+        mTimeCharacterIsShownWhileTypingInNano = TimeUnit.MILLISECONDS.toNanos(timeInMillis);
 
         invalidate();
     }
