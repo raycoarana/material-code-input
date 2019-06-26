@@ -88,7 +88,7 @@ Password mode to hide the code
 Alignment management of code digits and error message
 
 ```
-app:gravity="left|cemter|right"
+app:gravity="left|center|right"
 app:error_text_gravity="normal|center|opposite"
 ```
 
