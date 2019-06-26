@@ -57,4 +57,22 @@
 			app:code_text_color="#212121"
 			app:length_of_code="10"/>
 
+
+	<com.raycoarana.codeinputview.CodeInputView
+		android:id="@+id/gravity"
+		android:layout_marginTop="20dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:underline_width="40dp"
+		app:underline_stroke_width="1dp"
+		app:underline_selected_stroke_width="2dp"
+		app:underline_error_stroke_width="2dp"
+		app:error_text_margin_left="8dp"
+		app:error_text_margin_right="8dp"
+		app:code_text_size="24sp"
+		app:input_type="numeric"
+		app:gravity="left"
+		app:error_text_gravity="normal"
+		app:length_of_code="4"/>
+
 </LinearLayout>

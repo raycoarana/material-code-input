@@ -3,10 +3,12 @@ package com.raycoarana.codeinputview.sample;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.raycoarana.codeinputview.CodeInputView;
 import com.raycoarana.codeinputview.OnCodeCompleteListener;
+import com.raycoarana.codeinputview.OnDigitInputListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,5 +60,19 @@ public class MainActivity extends AppCompatActivity {
 				}, 1000);
 			}
 		});
+		codeInputView.addOnDigitInputListener(new OnDigitInputListener() {
+			@Override
+			public void onInput(char inputDigit) {
+				Log.i("CondeInputView", "Digit input: " + inputDigit);
+			}
+
+			@Override
+			public void onDelete() {
+				Log.i("CondeInputView", "Digit deleted");
+			}
+		});
+
+		final CodeInputView gravityView = findViewById(R.id.gravity);
+		gravityView.setError("Really big error message that will need to be wrapped in several lines so we need to properly measure and layout it.");
 	}
 }

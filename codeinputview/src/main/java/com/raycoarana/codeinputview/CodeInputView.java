@@ -10,12 +10,13 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.support.annotation.ColorRes;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.text.InputType;
+import android.text.Layout.Alignment;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +32,10 @@ import com.raycoarana.codeinputview.model.Underline;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 public class CodeInputView extends View {
 
@@ -58,11 +63,14 @@ public class CodeInputView extends View {
     private float mReduction;
     private float mTextSize;
     private float mTextMarginBottom;
+    private float mErrorTextMarginLeft;
+    private float mErrorTextMarginRight;
     private int mLengthOfCode;
     private int mUnderlineColor;
     private int mUnderlineSelectedColor;
     private int mTextColor;
     private List<OnCodeCompleteListener> mInputCompletedListeners = new ArrayList<>();
+    private List<OnDigitInputListener> mDigitInputListeners = new ArrayList<>();
     private boolean mIsEditable = true;
     private int mInputType = INPUT_TYPE_NUMERIC;
     private int mUnderLineY;
@@ -87,6 +95,9 @@ public class CodeInputView extends View {
     private long mTimeCharacterIsShownWhileTypingInNano;
     private int mTimeCharacterIsShownWhileTypingInMillis = DEFAULT_TIME_CHARACTER_IS_SHOWN_WHILE_TYPING;
     private long mLastTimeTypedInNano;
+    private int mGravity;
+    private int mErrorTextGravity;
+    private StaticLayout mErrorTextLayout;
 
     public CodeInputView(Context context) {
         super(context);
@@ -124,11 +135,15 @@ public class CodeInputView extends View {
         mTextColor = getColor(R.color.text_color);
         mTextSize = getContext().getResources().getDimension(R.dimen.text_size);
         mTextMarginBottom = getContext().getResources().getDimension(R.dimen.text_margin_bottom);
+        mErrorTextMarginLeft = 0;
+        mErrorTextMarginRight = 0;
         mErrorColor = getColor(R.color.error_color);
         mErrorTextColor = getColor(R.color.error_color);
         mErrorTextSize = getContext().getResources().getDimension(R.dimen.error_text_size);
         mErrorTextMarginTop = getContext().getResources().getDimension(R.dimen.error_text_margin_top);
         mReduction = mUnderlineReduction;
+        mGravity = Gravity.CENTER;
+        mErrorTextGravity = Gravity.CENTER;
     }
 
     @SuppressWarnings("deprecation")
@@ -160,6 +175,8 @@ public class CodeInputView extends View {
         mErrorTextColor = attributes.getInt(R.styleable.CodeInputView_error_text_color, mErrorTextColor);
         mErrorTextSize = attributes.getDimension(R.styleable.CodeInputView_error_text_size, mErrorTextSize);
         mErrorTextMarginTop = attributes.getDimension(R.styleable.CodeInputView_error_text_margin_top, mErrorTextMarginTop);
+        mErrorTextMarginLeft = attributes.getDimension(R.styleable.CodeInputView_error_text_margin_left, mErrorTextMarginLeft);
+        mErrorTextMarginRight = attributes.getDimension(R.styleable.CodeInputView_error_text_margin_right, mErrorTextMarginRight);
         mAnimateOnComplete = attributes.getBoolean(R.styleable.CodeInputView_animate_on_complete, true);
         mOnCompleteEventDelay = attributes.getInteger(R.styleable.CodeInputView_on_complete_delay, DISPATCH_COMPLETE_EVENT_DELAY);
         mShowKeyboard = attributes.getBoolean(R.styleable.CodeInputView_show_keyboard, mShowKeyboard);
@@ -167,6 +184,8 @@ public class CodeInputView extends View {
         mShowPasswordWhileTyping = attributes.getBoolean(R.styleable.CodeInputView_show_password_while_typing, mShowPasswordWhileTyping);
         mTimeCharacterIsShownWhileTypingInMillis = attributes.getInt(R.styleable.CodeInputView_time_character_is_shown_while_typing, mTimeCharacterIsShownWhileTypingInMillis);
         mTimeCharacterIsShownWhileTypingInNano = TimeUnit.MILLISECONDS.toNanos(mTimeCharacterIsShownWhileTypingInMillis);
+        mGravity = attributes.getInteger(R.styleable.CodeInputView_gravity, mGravity);
+        mErrorTextGravity = attributes.getInteger(R.styleable.CodeInputView_error_text_gravity, mErrorTextGravity);
 
         String passwordChar = attributes.getString(R.styleable.CodeInputView_password_character);
         if (passwordChar != null && passwordChar.length() == 1) {
@@ -199,8 +218,6 @@ public class CodeInputView extends View {
         mErrorTextPaint.setTextSize(mErrorTextSize);
         mErrorTextPaint.setColor(mErrorTextColor);
         mErrorTextPaint.setAntiAlias(true);
-        mErrorTextPaint.setTextAlign(Paint.Align.CENTER);
-
     }
 
     private void initAnimator() {
@@ -243,28 +260,50 @@ public class CodeInputView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mUnderLineY = (int) (mTextMarginBottom + mTextPaint.getFontSpacing());
+        Rect container = new Rect(0, 0, w, h);
+        Rect destinationRect = new Rect();
+
+        mErrorTextLayout = buildErrorTextLayout(w);
+        Gravity.apply(mGravity, getDesiredWidth(), getDesiredHeight(mErrorTextLayout), container, destinationRect);
+
+        mXOffset = destinationRect.left;
+        mUnderLineY = (int) (destinationRect.top + mTextMarginBottom + mTextPaint.getFontSpacing());
         initUnderline();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-        if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
-            float desiredWidth = mLengthOfCode * mUnderlineWidth;
-            width = Math.min((int) desiredWidth, width);
+    private StaticLayout buildErrorTextLayout(int width) {
+        int textWidth = (int) (width - mErrorTextMarginLeft - mErrorTextMarginRight);
+        StaticLayout staticLayout;
+        String errorMessage = mErrorMessage != null ? mErrorMessage : " ";
+        TextPaint textPaint = new TextPaint(mErrorTextPaint);
+        Alignment alignment = getAlignment();
+        if (VERSION.SDK_INT >= VERSION_CODES.M) {
+            staticLayout = StaticLayout.Builder.obtain(errorMessage, 0, errorMessage.length(), textPaint, textWidth)
+                    .setAlignment(alignment)
+                    .build();
+        } else {
+            staticLayout = new StaticLayout(
+                    mErrorMessage,
+                    textPaint,
+                    textWidth,
+                    alignment,
+                    1.0f,
+                    0,
+                    true
+            );
         }
-        if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
-            float desiredHeight = mErrorTextPaint.getFontSpacing() + mErrorTextPaint.getFontMetrics().bottom +
-                    mErrorTextMarginTop + mTextPaint.getFontSpacing() + mTextMarginBottom;
-            height = Math.min((int) desiredHeight, height);
+        return staticLayout;
+    }
+
+    private Alignment getAlignment() {
+        switch (mErrorTextGravity) {
+            case Gravity.CENTER: return Alignment.ALIGN_CENTER;
+            case Gravity.RIGHT: return Alignment.ALIGN_OPPOSITE;
+            default: return Alignment.ALIGN_NORMAL;
         }
-        setMeasuredDimension(width, height);
     }
 
     private void initUnderline() {
-        mXOffset = (int) Math.abs(getWidth() - (mLengthOfCode * mUnderlineWidth)) / 2;
         for (int i = 0; i < mLengthOfCode; i++) {
             mUnderlines[i] = createPath(i, mUnderlineWidth);
         }
@@ -273,6 +312,29 @@ public class CodeInputView extends View {
     private Underline createPath(int position, float sectionWidth) {
         float fromX = mXOffset + sectionWidth * (float) position;
         return new Underline(fromX, mUnderLineY, fromX + sectionWidth, mUnderLineY);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
+        if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
+            width = Math.min(getDesiredWidth(), width);
+        }
+
+        if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
+            int desiredHeight = getDesiredHeight(buildErrorTextLayout(width));
+            height = Math.min(desiredHeight, height);
+        }
+        setMeasuredDimension(width, height);
+    }
+
+    private int getDesiredWidth() {
+        return (int) (mLengthOfCode * mUnderlineWidth);
+    }
+
+    private int getDesiredHeight(StaticLayout errorTextLayout) {
+        return (int) (errorTextLayout.getHeight() + mErrorTextMarginTop + mTextPaint.getFontSpacing() + mTextMarginBottom);
     }
 
     private void showKeyboard() {
@@ -322,6 +384,7 @@ public class CodeInputView extends View {
         if (canDelete) {
             restoreState();
             mCharacters.pop();
+            notifyDeleteDigit();
             clearError();
         }
         return canDelete;
@@ -359,6 +422,7 @@ public class CodeInputView extends View {
                 }
             }, mTimeCharacterIsShownWhileTypingInMillis);
             invalidate();
+            notifyInputDigit(typedChar);
             if (mCharacters.size() == mLengthOfCode) {
                 dispatchComplete();
             }
@@ -389,6 +453,18 @@ public class CodeInputView extends View {
         }
     }
 
+    private void notifyInputDigit(char newDigit) {
+        for (OnDigitInputListener listener : mDigitInputListeners) {
+            listener.onInput(newDigit);
+        }
+    }
+
+    private void notifyDeleteDigit() {
+        for (OnDigitInputListener listener : mDigitInputListeners) {
+            listener.onDelete();
+        }
+    }
+
     /**
      * Enables that the user can edit the code or not
      *
@@ -407,6 +483,35 @@ public class CodeInputView extends View {
      */
     public void addOnCompleteListener(OnCodeCompleteListener listener) {
         mInputCompletedListeners.add(listener);
+    }
+
+
+    /**
+     * Removes a listener that will be fired once the user complete all the code characters
+     *
+     * @param listener listener to remove
+     */
+    public void removeOnCompleteListener(OnCodeCompleteListener listener) {
+        mInputCompletedListeners.remove(listener);
+    }
+
+    /**
+     * Adds a listener that will be fired every time a digit is added or removed
+     *
+     * @param listener listener to add
+     */
+    public void addOnDigitInputListener(OnDigitInputListener listener) {
+        mDigitInputListeners.add(listener);
+    }
+
+
+    /**
+     * Removes a listener that will be fired every time a digit is added or removed
+     *
+     * @param listener listener to remove
+     */
+    public void removeOnDigitInputListener(OnDigitInputListener listener) {
+        mDigitInputListeners.remove(listener);
     }
 
     /**
@@ -450,12 +555,12 @@ public class CodeInputView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         for (int i = 0; i < mUnderlines.length; i++) {
-            Underline sectionpath = mUnderlines[i];
-            float fromX = sectionpath.getFromX() + mReduction;
-            float fromY = sectionpath.getFromY();
-            float toX = sectionpath.getToX() - mReduction;
-            float toY = sectionpath.getToY();
-            if (mCharacters.size() > i && mCharacters.size() != 0) {
+            Underline sectionPath = mUnderlines[i];
+            float fromX = sectionPath.getFromX() + mReduction;
+            float fromY = sectionPath.getFromY();
+            float toX = sectionPath.getToX() - mReduction;
+            float toY = sectionPath.getToY();
+            if (mCharacters.size() > i) {
                 canvas.save();
                 canvas.clipRect(0, 0, toX, toY);
                 boolean canBeShown = mCharacters.size() - 1 == i && mShowPasswordWhileTyping && System.nanoTime() - mLastTimeTypedInNano < mTimeCharacterIsShownWhileTypingInNano;
@@ -465,6 +570,7 @@ public class CodeInputView extends View {
             }
             drawSection(i, fromX, fromY, toX, toY, canvas);
         }
+
         drawErrorMessage(canvas);
     }
 
@@ -473,13 +579,13 @@ public class CodeInputView extends View {
             return;
         }
 
-        int x = getWidth() / 2;
-        int y = (int) (mUnderLineY + mErrorTextMarginTop + mErrorTextPaint.getFontSpacing());
-        canvas.drawText(mErrorMessage, x, y, mErrorTextPaint);
+        canvas.save();
+        canvas.translate(mErrorTextMarginLeft, mUnderLineY + mErrorTextMarginTop);
+        mErrorTextLayout.draw(canvas);
+        canvas.restore();
     }
 
-    private void drawSection(int position, float fromX, float fromY, float toX, float toY,
-            Canvas canvas) {
+    private void drawSection(int position, float fromX, float fromY, float toX, float toY, Canvas canvas) {
         Paint paint = mUnderlinePaint;
         if (position == mCharacters.size() && hasFocus()) {
             paint = mUnderlineSelectedPaint;
@@ -543,6 +649,10 @@ public class CodeInputView extends View {
      * @param errorMessage the message to show
      */
     public void setError(String errorMessage) {
+        if (errorMessage != null && errorMessage.isEmpty()) {
+            errorMessage = null;
+        }
+
         if ((mErrorMessage == null || mErrorMessage.isEmpty()) && errorMessage != null) {
             if (mAnimateOnComplete) {
                 mErrorColorAnimator.start();
@@ -552,7 +662,7 @@ public class CodeInputView extends View {
             }
             restoreState();
             mUnderlinePaint.setStrokeWidth(mUnderlineErrorStrokeWidth);
-        } else if (mErrorMessage != null && (errorMessage == null || errorMessage.isEmpty())) {
+        } else if (mErrorMessage != null && errorMessage == null) {
             if (mAnimateOnComplete) {
                 mErrorColorAnimator.reverse();
                 mErrorTextAnimator.reverse();
@@ -561,10 +671,10 @@ public class CodeInputView extends View {
             }
             mUnderlinePaint.setStrokeWidth(mUnderlineStrokeWidth);
         }
+
         mErrorMessage = errorMessage;
         invalidate();
     }
-
 
     /**
      * Return the current error message, if any

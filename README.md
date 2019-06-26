@@ -14,6 +14,15 @@ Based on
 [Code input lib](https://github.com/glomadrian/material-code-input) by [Adrián García Lomas](https://github.com/glomadrian)
 
 
+Changelog
+----------
+
+v2.0.0
+	* Added support for horizontal layout gravity to control digits alignment using `app:gravity`.
+	* Added support for error text alignment `app:error_text_gravity`.
+	* Added support for error text multiline.
+	* Added `OnDigitInputListener` to dispatch events on every digit input or removed by the user.
+
 How to use
 ----------
 
@@ -74,6 +83,13 @@ Show an error when the code is not valid
 Password mode to hide the code
 ```java
   codeInputView.setPasswordMode(true);
+```
+
+Alignment management of code digits and error message
+
+```
+app:gravity="left|cemter|right"
+app:error_text_gravity="normal|center|opposite"
 ```
 
 For Gradle

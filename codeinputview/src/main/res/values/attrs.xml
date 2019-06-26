@@ -15,6 +15,8 @@
     <attr name="error_text_color" format="color"/>
     <attr name="error_text_size" format="dimension"/>
     <attr name="error_text_margin_top" format="dimension"/>
+    <attr name="error_text_margin_left" format="dimension"/>
+    <attr name="error_text_margin_right" format="dimension"/>
     <attr name="length_of_code" format="integer"/>
     <attr name="animate_on_complete" format="boolean"/>
     <attr name="on_complete_delay" format="integer"/>
@@ -27,5 +29,15 @@
     <attr name="time_character_is_shown_while_typing" format="integer"/>
     <attr name="password_character" format="string"/>
     <attr name="show_keyboard" format="boolean"/>
+    <attr name="gravity" format="enum">
+      <enum name="center" value="17" />
+      <enum name="left" value="3" />
+      <enum name="right" value="5" />
+    </attr>
+    <attr name="error_text_gravity" format="enum">
+      <enum name="normal" value="3" />
+      <enum name="center" value="17" />
+      <enum name="opposite" value="5" />
+    </attr>
   </declare-styleable>
 </resources>
