@@ -52,6 +52,7 @@
 			android:layout_marginTop="20dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			app:imeOptions="actionNext"
 			app:underline_color="#03A9F4"
 			app:underline_selected_color="#3F51B5"
 			app:code_text_color="#212121"
@@ -73,6 +74,10 @@
 		app:input_type="numeric"
 		app:gravity="left"
 		app:error_text_gravity="normal"
-		app:length_of_code="4"/>
+		app:length_of_code="4"
+		app:imeOptions="actionDone"
+		app:imeActionId="100"
+		app:imeActionLabel="Busca!"
+		/>
 
 </LinearLayout>

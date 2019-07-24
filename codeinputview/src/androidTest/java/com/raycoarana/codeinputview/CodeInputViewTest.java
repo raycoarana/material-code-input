@@ -1,30 +1,27 @@
-package com.github.glomadrian.codearealib;
-
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.rule.UiThreadTestRule;
-import android.support.test.runner.AndroidJUnit4;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
-
-import com.raycoarana.codeinputview.CodeInputView;
-import com.raycoarana.codeinputview.OnCodeCompleteListener;
-import com.raycoarana.codeinputview.test.R;
+package com.raycoarana.codeinputview;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.pressKey;
-import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static com.github.glomadrian.codearealib.CodeInputMatchers.withCode;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.pressKey;
+import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.UiThreadTestRule;
+import static com.raycoarana.codeinputview.CodeInputMatchers.withCode;
 import static org.junit.Assert.assertEquals;
+import android.view.KeyEvent;
+
+import com.raycoarana.codeinputview.test.R;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -136,7 +133,7 @@ public class CodeInputViewTest {
 
     @NonNull
     private CodeInputView findTargetView() {
-        CodeInputView view = (CodeInputView) mActivity.findViewById(R.id.code_input);
+        CodeInputView view = mActivity.findViewById(R.id.code_input);
         if (view == null) {
             throw new IllegalStateException("Target view not found!");
         }

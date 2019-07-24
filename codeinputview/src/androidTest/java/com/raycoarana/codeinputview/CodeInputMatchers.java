@@ -1,4 +1,4 @@
-package com.github.glomadrian.codearealib;
+package com.raycoarana.codeinputview;
 
 import android.view.View;
 

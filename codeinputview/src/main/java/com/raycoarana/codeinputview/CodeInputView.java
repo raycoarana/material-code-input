@@ -1,17 +1,35 @@
 package com.raycoarana.codeinputview;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.annotation.XmlRes;
+
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.content.res.XmlResourceParser;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.InputType;
 import android.text.Layout.Alignment;
+import android.text.SpannableStringBuilder;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -26,16 +44,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 
-import com.raycoarana.codeinputview.data.FixedStack;
 import com.raycoarana.codeinputview.model.Underline;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import androidx.annotation.ColorRes;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 
 public class CodeInputView extends View {
 
@@ -50,8 +59,7 @@ public class CodeInputView extends View {
 
     private static final String TAG = "CodeInputView";
 
-    private FixedStack<Character> mCharacters;
-    private Underline mUnderlines[];
+    private Underline[] mUnderlines;
     private Paint mUnderlinePaint;
     private Paint mUnderlineSelectedPaint;
     private Paint mTextPaint;
@@ -98,6 +106,37 @@ public class CodeInputView extends View {
     private int mGravity;
     private int mErrorTextGravity;
     private StaticLayout mErrorTextLayout;
+    private InputContentType mInputContentType = new InputContentType();
+    private SpannableStringBuilder mSpannableSupportBuilder = new SpannableStringBuilder();
+
+    static class InputContentType {
+        int imeOptions = EditorInfo.IME_NULL;
+        String privateImeOptions;
+        CharSequence imeActionLabel;
+        int imeActionId;
+        Bundle extras;
+        OnEditorActionListener onEditorActionListener;
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when an action is
+     * performed on the editor.
+     */
+    public interface OnEditorActionListener {
+        /**
+         * Called when an action is being performed.
+         *
+         * @param v        The view that was clicked.
+         * @param actionId Identifier of the action.  This will be either the
+         *                 identifier you supplied, or {@link EditorInfo#IME_NULL
+         *                 EditorInfo.IME_NULL} if being called due to the enter key
+         *                 being pressed.
+         * @param event    If triggered by an enter key, this is the event;
+         *                 otherwise, this is null.
+         * @return Return true if you have consumed the action, else false.
+         */
+        boolean onEditorAction(CodeInputView v, int actionId, KeyEvent event);
+    }
 
     public CodeInputView(Context context) {
         super(context);
@@ -186,6 +225,20 @@ public class CodeInputView extends View {
         mTimeCharacterIsShownWhileTypingInNano = TimeUnit.MILLISECONDS.toNanos(mTimeCharacterIsShownWhileTypingInMillis);
         mGravity = attributes.getInteger(R.styleable.CodeInputView_gravity, mGravity);
         mErrorTextGravity = attributes.getInteger(R.styleable.CodeInputView_error_text_gravity, mErrorTextGravity);
+        mInputContentType.imeOptions = attributes.getInteger(R.styleable.CodeInputView_imeOptions, mInputContentType.imeOptions);
+        mInputContentType.imeActionId = attributes.getInteger(R.styleable.CodeInputView_imeActionId, mInputContentType.imeActionId);
+        mInputContentType.imeActionLabel = attributes.getString(R.styleable.CodeInputView_imeActionLabel);
+        mInputContentType.privateImeOptions = attributes.getString(R.styleable.CodeInputView_privateImeOptions);
+        int inputExtrasResId = attributes.getInteger(R.styleable.CodeInputView_editorExtras, 0);
+        if (inputExtrasResId != 0) {
+            try {
+                setInputExtras(inputExtrasResId);
+            } catch (XmlPullParserException e) {
+                Log.w(TAG, "Failure reading input extras", e);
+            } catch (IOException e) {
+                Log.w(TAG, "Failure reading input extras", e);
+            }
+        }
 
         String passwordChar = attributes.getString(R.styleable.CodeInputView_password_character);
         if (passwordChar != null && passwordChar.length() == 1) {
@@ -196,8 +249,6 @@ public class CodeInputView extends View {
 
     private void initDataStructures() {
         mUnderlines = new Underline[mLengthOfCode];
-        mCharacters = new FixedStack<>();
-        mCharacters.setMaxSize(mLengthOfCode);
     }
 
     private void initPaint() {
@@ -297,9 +348,12 @@ public class CodeInputView extends View {
 
     private Alignment getAlignment() {
         switch (mErrorTextGravity) {
-            case Gravity.CENTER: return Alignment.ALIGN_CENTER;
-            case Gravity.RIGHT: return Alignment.ALIGN_OPPOSITE;
-            default: return Alignment.ALIGN_NORMAL;
+            case Gravity.CENTER:
+                return Alignment.ALIGN_CENTER;
+            case Gravity.RIGHT:
+                return Alignment.ALIGN_OPPOSITE;
+            default:
+                return Alignment.ALIGN_NORMAL;
         }
     }
 
@@ -356,15 +410,296 @@ public class CodeInputView extends View {
                 outAttrs.inputType = InputType.TYPE_CLASS_NUMBER;
                 break;
             case INPUT_TYPE_TEXT:
-                outAttrs.inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
+                outAttrs.inputType = InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD;
                 break;
         }
+
+        outAttrs.imeOptions = mInputContentType.imeOptions;
+        outAttrs.privateImeOptions = mInputContentType.privateImeOptions;
+        outAttrs.actionLabel = mInputContentType.imeActionLabel;
+        outAttrs.actionId = mInputContentType.imeActionId;
+        outAttrs.extras = mInputContentType.extras;
+
         return new BaseInputConnection(this, false) {
+
             @Override
             public boolean deleteSurroundingText(int beforeLength, int afterLength) {
                 return deleteCharacter();
             }
+
+            @Override
+            public boolean performEditorAction(int actionCode) {
+                if (CodeInputView.this.onEditorAction(actionCode)) {
+                    super.performEditorAction(actionCode);
+                }
+                return true;
+            }
         };
+    }
+
+    /**
+     * Called when an attached input method calls
+     * {@link InputConnection#performEditorAction(int)
+     * InputConnection.performEditorAction()}
+     * for this mCode view.  The default implementation will call your action
+     * listener supplied to {@link #setOnEditorActionListener}, or perform
+     * a standard operation for {@link EditorInfo#IME_ACTION_NEXT
+     * EditorInfo.IME_ACTION_NEXT}, {@link EditorInfo#IME_ACTION_PREVIOUS
+     * EditorInfo.IME_ACTION_PREVIOUS}, or {@link EditorInfo#IME_ACTION_DONE
+     * EditorInfo.IME_ACTION_DONE}.
+     *
+     * <p>For backwards compatibility, if no IME options have been set and the
+     * mCode view would not normally advance focus on enter, then
+     * the NEXT and DONE actions received here will be turned into an enter
+     * key down/up pair to go through the normal key handling.
+     *
+     * @param actionCode The code of the action being performed.
+     * @see #setOnEditorActionListener
+     */
+    @SuppressLint("WrongConstant")
+    private boolean onEditorAction(int actionCode) {
+        if (mInputContentType.onEditorActionListener != null) {
+            int actionId = mInputContentType.imeActionId;
+            if (actionId == 0) {
+                actionId = actionCode;
+            }
+            if (mInputContentType.onEditorActionListener.onEditorAction(this, actionId, null)) {
+                return false;
+            }
+        }
+
+        if (actionCode == EditorInfo.IME_ACTION_NEXT) {
+            View v = focusSearch(FOCUS_FORWARD);
+            if (v != null) {
+                if (!v.requestFocus(FOCUS_FORWARD)) {
+                    throw new IllegalStateException("focus search returned a view that wasn't able to take focus!");
+                }
+            }
+        } else if (actionCode == EditorInfo.IME_ACTION_PREVIOUS) {
+            View v = focusSearch(FOCUS_BACKWARD);
+            if (v != null) {
+                if (!v.requestFocus(FOCUS_BACKWARD)) {
+                    throw new IllegalStateException("focus search returned a view that wasn't able to take focus!");
+                }
+            }
+        } else if (actionCode == EditorInfo.IME_ACTION_DONE) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null && inputMethodManager.isActive(this)) {
+                inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
+            }
+        }
+        return true;
+    }
+
+    @Nullable
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.mCode = getCode();
+        ss.mError = getError();
+        return ss;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (!(state instanceof SavedState)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+
+        SavedState savedState = (SavedState) state;
+        super.onRestoreInstanceState(savedState.getSuperState());
+
+        setError(savedState.mError);
+        setCode(savedState.mCode);
+    }
+
+    /**
+     * User interface state that is stored by CodeInputView for implementing
+     * {@link View#onSaveInstanceState}.
+     */
+    public static class SavedState extends BaseSavedState {
+        String mCode;
+        String mError;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeString(mCode);
+
+            if (mError == null) {
+                out.writeInt(0);
+            } else {
+                out.writeInt(1);
+                out.writeString(mError);
+            }
+        }
+
+        @Override
+        public String toString() {
+            String str = "CodeInputView.SavedState{" + Integer.toHexString(System.identityHashCode(this));
+            if (mCode != null) {
+                str += " mCode=" + mCode;
+            }
+            if (mError != null) {
+                str += " mError=" + mError;
+            }
+            return str + "}";
+        }
+
+        public static final Parcelable.Creator<CodeInputView.SavedState> CREATOR =
+                new Parcelable.Creator<CodeInputView.SavedState>() {
+                    public CodeInputView.SavedState createFromParcel(Parcel in) {
+                        return new CodeInputView.SavedState(in);
+                    }
+
+                    public CodeInputView.SavedState[] newArray(int size) {
+                        return new CodeInputView.SavedState[size];
+                    }
+                };
+
+        private SavedState(Parcel in) {
+            super(in);
+            mCode = in.readString();
+
+            if (in.readInt() != 0) {
+                mError = in.readString();
+            }
+        }
+    }
+
+    /**
+     * Change the editor type integer associated with the mCode view, which
+     * is reported to an Input Method Editor (IME) with {@link EditorInfo#imeOptions}
+     * when it has focus.
+     *
+     * @attr ref android.R.styleable#TextView_imeOptions
+     * @see #getImeOptions
+     * @see android.view.inputmethod.EditorInfo
+     */
+    public void setImeOptions(int imeOptions) {
+        mInputContentType.imeOptions = imeOptions;
+    }
+
+    /**
+     * Get the type of the Input Method Editor (IME).
+     *
+     * @return the type of the IME
+     * @see #setImeOptions(int)
+     * @see android.view.inputmethod.EditorInfo
+     */
+    public int getImeOptions() {
+        return mInputContentType.imeOptions;
+    }
+
+    /**
+     * Change the custom IME action associated with the mCode view, which
+     * will be reported to an IME with {@link EditorInfo#actionLabel}
+     * and {@link EditorInfo#actionId} when it has focus.
+     *
+     * @attr ref android.R.styleable#TextView_imeActionLabel
+     * @attr ref android.R.styleable#TextView_imeActionId
+     * @see #getImeActionLabel
+     * @see #getImeActionId
+     * @see android.view.inputmethod.EditorInfo
+     */
+    public void setImeActionLabel(CharSequence label, int actionId) {
+        mInputContentType.imeActionLabel = label;
+        mInputContentType.imeActionId = actionId;
+    }
+
+    /**
+     * Get the IME action label previous set with {@link #setImeActionLabel}.
+     *
+     * @see #setImeActionLabel
+     * @see android.view.inputmethod.EditorInfo
+     */
+    public CharSequence getImeActionLabel() {
+        return mInputContentType.imeActionLabel;
+    }
+
+    /**
+     * Get the IME action ID previous set with {@link #setImeActionLabel}.
+     *
+     * @see #setImeActionLabel
+     * @see android.view.inputmethod.EditorInfo
+     */
+    public int getImeActionId() {
+        return mInputContentType.imeActionId;
+    }
+
+    /**
+     * Set a special listener to be called when an action is performed
+     * on the mCode view.  This will be called when the enter key is pressed,
+     * or when an action supplied to the IME is selected by the user.  Setting
+     * this means that the normal hard key event will not insert a newline
+     * into the mCode view, even if it is multi-line; holding down the ALT
+     * modifier will, however, allow the user to insert a newline character.
+     */
+    public void setOnEditorActionListener(OnEditorActionListener l) {
+        mInputContentType.onEditorActionListener = l;
+    }
+
+    /**
+     * Set the private content type of the mCode, which is the
+     * {@link EditorInfo#privateImeOptions EditorInfo.privateImeOptions}
+     * field that will be filled in when creating an input connection.
+     *
+     * @attr ref android.R.styleable#TextView_privateImeOptions
+     * @see #getPrivateImeOptions()
+     * @see EditorInfo#privateImeOptions
+     */
+    public void setPrivateImeOptions(String type) {
+        mInputContentType.privateImeOptions = type;
+    }
+
+    /**
+     * Get the private type of the content.
+     *
+     * @see #setPrivateImeOptions(String)
+     * @see EditorInfo#privateImeOptions
+     */
+    public String getPrivateImeOptions() {
+        return mInputContentType.privateImeOptions;
+    }
+
+    /**
+     * Set the extra input data of the mCode, which is the
+     * {@link EditorInfo#extras TextBoxAttribute.extras}
+     * Bundle that will be filled in when creating an input connection.  The
+     * given integer is the resource identifier of an XML resource holding an
+     * {@link android.R.styleable#InputExtras &lt;input-extras&gt;} XML tree.
+     *
+     * @attr ref android.R.styleable#TextView_editorExtras
+     * @see #getInputExtras(boolean)
+     * @see EditorInfo#extras
+     */
+    public void setInputExtras(@XmlRes int xmlResId) throws XmlPullParserException, IOException {
+        XmlResourceParser parser = getResources().getXml(xmlResId);
+        mInputContentType.extras = new Bundle();
+        getResources().parseBundleExtras(parser, mInputContentType.extras);
+    }
+
+    /**
+     * Retrieve the input extras currently associated with the mCode view, which
+     * can be viewed as well as modified.
+     *
+     * @param create If true, the extras will be created if they don't already
+     *               exist.  Otherwise, null will be returned if none have been created.
+     * @attr ref android.R.styleable#TextView_editorExtras
+     * @see #setInputExtras(int)
+     * @see EditorInfo#extras
+     */
+    public Bundle getInputExtras(boolean create) {
+        if (mInputContentType.extras == null && create) {
+            mInputContentType.extras = new Bundle();
+        }
+        return mInputContentType.extras;
     }
 
     /**
@@ -373,17 +708,25 @@ public class CodeInputView extends View {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyevent) {
         if (keyCode == KeyEvent.KEYCODE_DEL) {
-            mLastTimeTypedInNano = 0;
             deleteCharacter();
         }
         return super.onKeyDown(keyCode, keyevent);
     }
 
     private boolean deleteCharacter() {
-        boolean canDelete = mCharacters.size() > 0 && mIsEditable;
+        boolean canDelete = prepareForDelete(mSpannableSupportBuilder.length());
+        if (canDelete) {
+            int length = mSpannableSupportBuilder.length();
+            mSpannableSupportBuilder.delete(length - 1, length);
+        }
+        return canDelete;
+    }
+
+    private boolean prepareForDelete(int currentLength) {
+        mLastTimeTypedInNano = 0;
+        boolean canDelete = currentLength > 0 && mIsEditable;
         if (canDelete) {
             restoreState();
-            mCharacters.pop();
             notifyDeleteDigit();
             clearError();
         }
@@ -391,7 +734,7 @@ public class CodeInputView extends View {
     }
 
     private void restoreState() {
-        if (mCharacters.size() == mLengthOfCode &&
+        if (mSpannableSupportBuilder.length() == mLengthOfCode &&
                 !mReductionAnimator.getAnimatedValue().equals(mUnderlineReduction) &&
                 mAnimateOnComplete) {
             mReductionAnimator.reverse();
@@ -412,8 +755,8 @@ public class CodeInputView extends View {
             isValid = Character.isLetterOrDigit(typedChar);
         }
 
-        if (mIsEditable && isValid && mCharacters.size() < mLengthOfCode) {
-            mCharacters.push(typedChar);
+        if (mIsEditable && isValid && mSpannableSupportBuilder.length() < mLengthOfCode) {
+            mSpannableSupportBuilder.append(typedChar);
             mLastTimeTypedInNano = System.nanoTime();
             postDelayed(new Runnable() {
                 @Override
@@ -423,7 +766,7 @@ public class CodeInputView extends View {
             }, mTimeCharacterIsShownWhileTypingInMillis);
             invalidate();
             notifyInputDigit(typedChar);
-            if (mCharacters.size() == mLengthOfCode) {
+            if (mSpannableSupportBuilder.length() == mLengthOfCode) {
                 dispatchComplete();
             }
             return true;
@@ -560,11 +903,12 @@ public class CodeInputView extends View {
             float fromY = sectionPath.getFromY();
             float toX = sectionPath.getToX() - mReduction;
             float toY = sectionPath.getToY();
-            if (mCharacters.size() > i) {
+            int charactersCount = mSpannableSupportBuilder.length();
+            if (charactersCount > i) {
                 canvas.save();
                 canvas.clipRect(0, 0, toX, toY);
-                boolean canBeShown = mCharacters.size() - 1 == i && mShowPasswordWhileTyping && System.nanoTime() - mLastTimeTypedInNano < mTimeCharacterIsShownWhileTypingInNano;
-                char charToDraw = (mInPasswordMode && !canBeShown) ? mPasswordCharacter : mCharacters.get(i);
+                boolean canBeShown = charactersCount - 1 == i && mShowPasswordWhileTyping && System.nanoTime() - mLastTimeTypedInNano < mTimeCharacterIsShownWhileTypingInNano;
+                char charToDraw = (mInPasswordMode && !canBeShown) ? mPasswordCharacter : mSpannableSupportBuilder.charAt(i);
                 drawCharacter(fromX, toX, charToDraw, canvas);
                 canvas.restore();
             }
@@ -587,7 +931,7 @@ public class CodeInputView extends View {
 
     private void drawSection(int position, float fromX, float fromY, float toX, float toY, Canvas canvas) {
         Paint paint = mUnderlinePaint;
-        if (position == mCharacters.size() && hasFocus()) {
+        if (position == mSpannableSupportBuilder.length() && hasFocus()) {
             paint = mUnderlineSelectedPaint;
         }
         canvas.drawLine(fromX, fromY, toX, toY, paint);
@@ -606,11 +950,7 @@ public class CodeInputView extends View {
      * @return the code
      */
     public String getCode() {
-        StringBuilder builder = new StringBuilder();
-        for (Character item : mCharacters) {
-            builder.append(item.charValue());
-        }
-        return builder.toString();
+        return mSpannableSupportBuilder.toString();
     }
 
     /**
@@ -619,16 +959,14 @@ public class CodeInputView extends View {
      * @param code string where to extract the code
      */
     @SuppressWarnings("SameParameterValue")
-    public void setCode(String code) {
-        if (code.length() > mLengthOfCode) {
+    public void setCode(@Nullable String code) {
+        if (code != null && code.length() > mLengthOfCode) {
             Log.e(TAG, "Code length is bigger that codes count");
             return;
         }
 
-        mCharacters.clear();
-        for (char item : code.toCharArray()) {
-            mCharacters.add(item);
-        }
+        mSpannableSupportBuilder.clear();
+        mSpannableSupportBuilder.append(code);
         invalidate();
     }
 

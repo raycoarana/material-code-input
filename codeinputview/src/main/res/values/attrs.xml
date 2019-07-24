@@ -39,5 +39,30 @@
       <enum name="center" value="17" />
       <enum name="opposite" value="5" />
     </attr>
+    <!-- The constants here correspond to those defined by
+         {@link android.view.inputmethod.EditorInfo#imeOptions}. -->
+    <attr name="imeOptions">
+      <flag name="normal" value="0x00000000" />
+      <flag name="actionUnspecified" value="0x00000000" />
+      <flag name="actionNone" value="0x00000001" />
+      <flag name="actionGo" value="0x00000002" />
+      <flag name="actionSearch" value="0x00000003" />
+      <flag name="actionSend" value="0x00000004" />
+      <flag name="actionNext" value="0x00000005" />
+      <flag name="actionDone" value="0x00000006" />
+      <flag name="actionPrevious" value="0x00000007" />
+      <flag name="flagNoPersonalizedLearning" value="0x1000000" />
+      <flag name="flagNoFullscreen" value="0x2000000" />
+      <flag name="flagNavigatePrevious" value="0x4000000" />
+      <flag name="flagNavigateNext" value="0x8000000" />
+      <flag name="flagNoExtractUi" value="0x10000000" />
+      <flag name="flagNoAccessoryAction" value="0x20000000" />
+      <flag name="flagNoEnterAction" value="0x40000000" />
+      <flag name="flagForceAscii" value="0x80000000" />
+    </attr>
+    <attr name="privateImeOptions" format="string" />
+    <attr name="imeActionLabel" format="string" />
+    <attr name="imeActionId" format="integer" />
+    <attr name="editorExtras" format="reference" />
   </declare-styleable>
 </resources>

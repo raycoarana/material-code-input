@@ -1,12 +1,14 @@
 package com.raycoarana.codeinputview.sample;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.raycoarana.codeinputview.CodeInputView;
+import com.raycoarana.codeinputview.CodeInputView.OnEditorActionListener;
 import com.raycoarana.codeinputview.OnCodeCompleteListener;
 import com.raycoarana.codeinputview.OnDigitInputListener;
 
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 		codeInputView.addOnDigitInputListener(new OnDigitInputListener() {
 			@Override
 			public void onInput(char inputDigit) {
-				Log.i("CondeInputView", "Digit input: " + inputDigit);
+				Log.i("CodeInputView", "Digit input: " + inputDigit);
 			}
 
 			@Override
@@ -74,5 +76,12 @@ public class MainActivity extends AppCompatActivity {
 
 		final CodeInputView gravityView = findViewById(R.id.gravity);
 		gravityView.setError("Really big error message that will need to be wrapped in several lines so we need to properly measure and layout it.");
+		gravityView.setOnEditorActionListener(new OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(CodeInputView v, int actionId, KeyEvent event) {
+				Log.i("CodeInputView", "actionId: " + actionId);
+				return true;
+			}
+		});
 	}
 }

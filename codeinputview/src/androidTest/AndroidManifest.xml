@@ -3,7 +3,7 @@
 
     <application>
         <activity
-            android:name="android.support.v7.app.AppCompatActivity"
+            android:name="androidx.appcompat.app.AppCompatActivity"
             android:theme="@style/Theme.AppCompat" />
     </application>
 </manifest>
