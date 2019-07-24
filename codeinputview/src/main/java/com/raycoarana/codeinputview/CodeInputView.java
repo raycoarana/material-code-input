@@ -1011,6 +1011,10 @@ public class CodeInputView extends View {
         }
 
         mErrorMessage = errorMessage;
+        int width = getWidth();
+        if (width > 0) {
+            mErrorTextLayout = buildErrorTextLayout(width);
+        }
         invalidate();
     }
 
@@ -1232,7 +1236,11 @@ public class CodeInputView extends View {
     private class ErrorTextAnimatorListener implements AnimatorUpdateListener {
         @Override
         public void onAnimationUpdate(ValueAnimator animation) {
-            mErrorTextPaint.setAlpha((Integer) animation.getAnimatedValue());
+            Integer animatedValue = (Integer) animation.getAnimatedValue();
+            mErrorTextPaint.setAlpha(animatedValue);
+            if (mErrorTextLayout != null) {
+                mErrorTextLayout.getPaint().setAlpha(animatedValue);
+            }
             invalidate();
         }
     }
