@@ -17,6 +17,11 @@ Based on
 Changelog
 ----------
 
+**v2.1.0**
+ * Added support for IME Options using `app:imeOptions` and other input set-up.
+ * Added support for configuration changes state management, now code/error are not lost after configuration change.
+ * Fix error text drawing.
+
 **v2.0.0**
  * Added support for horizontal layout gravity to control digits alignment using `app:gravity`.
  * Added support for error text alignment `app:error_text_gravity`.
@@ -97,7 +102,7 @@ For Gradle
 
 Add dependency
 ```java
-compile 'com.raycoarana.codeinputview:codeinputview:2.0.0'
+compile 'com.raycoarana.codeinputview:codeinputview:2.1.0'
 ```
 
 License

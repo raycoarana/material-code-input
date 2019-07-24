@@ -578,7 +578,7 @@ public class CodeInputView extends View {
      * is reported to an Input Method Editor (IME) with {@link EditorInfo#imeOptions}
      * when it has focus.
      *
-     * @attr ref android.R.styleable#TextView_imeOptions
+     * Ref android.R.styleable#TextView_imeOptions
      * @see #getImeOptions
      * @see android.view.inputmethod.EditorInfo
      */
@@ -602,8 +602,8 @@ public class CodeInputView extends View {
      * will be reported to an IME with {@link EditorInfo#actionLabel}
      * and {@link EditorInfo#actionId} when it has focus.
      *
-     * @attr ref android.R.styleable#TextView_imeActionLabel
-     * @attr ref android.R.styleable#TextView_imeActionId
+     * Ref android.R.styleable#TextView_imeActionLabel
+     * Ref android.R.styleable#TextView_imeActionId
      * @see #getImeActionLabel
      * @see #getImeActionId
      * @see android.view.inputmethod.EditorInfo
@@ -650,7 +650,7 @@ public class CodeInputView extends View {
      * {@link EditorInfo#privateImeOptions EditorInfo.privateImeOptions}
      * field that will be filled in when creating an input connection.
      *
-     * @attr ref android.R.styleable#TextView_privateImeOptions
+     * Ref android.R.styleable#TextView_privateImeOptions
      * @see #getPrivateImeOptions()
      * @see EditorInfo#privateImeOptions
      */
@@ -673,9 +673,9 @@ public class CodeInputView extends View {
      * {@link EditorInfo#extras TextBoxAttribute.extras}
      * Bundle that will be filled in when creating an input connection.  The
      * given integer is the resource identifier of an XML resource holding an
-     * {@link android.R.styleable#InputExtras &lt;input-extras&gt;} XML tree.
+     * {android.R.styleable#InputExtras &lt;input-extras&gt;} XML tree.
      *
-     * @attr ref android.R.styleable#TextView_editorExtras
+     * Ref android.R.styleable#TextView_editorExtras
      * @see #getInputExtras(boolean)
      * @see EditorInfo#extras
      */
@@ -691,7 +691,7 @@ public class CodeInputView extends View {
      *
      * @param create If true, the extras will be created if they don't already
      *               exist.  Otherwise, null will be returned if none have been created.
-     * @attr ref android.R.styleable#TextView_editorExtras
+     * Ref android.R.styleable#TextView_editorExtras
      * @see #setInputExtras(int)
      * @see EditorInfo#extras
      */
