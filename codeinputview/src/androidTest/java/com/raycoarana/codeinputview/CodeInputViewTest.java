@@ -13,15 +13,22 @@ import static androidx.test.espresso.action.ViewActions.pressKey;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.rule.UiThreadTestRule;
 import static com.raycoarana.codeinputview.CodeInputMatchers.withCode;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import android.view.KeyEvent;
 
 import com.raycoarana.codeinputview.test.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -36,6 +43,7 @@ public class CodeInputViewTest {
     private OnCodeCompleteListener mOnCodeCompleteListener;
     private AppCompatActivity mActivity;
     private String mActualCode;
+    private OnDigitInputListener mOnDigitInputListener;
 
     @Before
     public void setUpLayout() {
@@ -105,6 +113,20 @@ public class CodeInputViewTest {
         assertEquals("1234", mActualCode);
     }
 
+    @Test
+    public void shouldExecuteDigitTyped() throws Throwable {
+        givenAnActivityWithLayout(R.layout.simple_code_input);
+        givenThatOnDigitInputListenerIsAdded();
+
+        onView(withId(R.id.code_input)).perform(typeText("1"));
+
+        assertArrayEquals(new Character[] { '1' }, mOnInputDigitItems.toArray(new Character[1]));
+
+        onView(withId(R.id.code_input)).perform(pressKey(KeyEvent.KEYCODE_DEL));
+
+        assertTrue(mOnDeleteCalled);
+    }
+
     private void givenAnActivityWithLayout(@LayoutRes final int layoutResId) throws Throwable {
         mUiThreadRule.runOnUiThread(new Runnable() {
             @Override
@@ -127,6 +149,32 @@ public class CodeInputViewTest {
                 CodeInputView codeInputView = findTargetView();
                 codeInputView.setOnCompleteEventDelay(0);
                 codeInputView.addOnCompleteListener(mOnCodeCompleteListener);
+            }
+        });
+    }
+
+    private List<Character> mOnInputDigitItems = new ArrayList<>();
+    private boolean mOnDeleteCalled;
+
+    private void givenThatOnDigitInputListenerIsAdded() throws Throwable {
+        mOnDigitInputListener = new OnDigitInputListener() {
+
+
+            @Override
+            public void onInput(char inputDigit) {
+                mOnInputDigitItems.add(inputDigit);
+            }
+
+            @Override
+            public void onDelete() {
+                mOnDeleteCalled = true;
+            }
+        };
+        mUiThreadRule.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                CodeInputView codeInputView = findTargetView();
+                codeInputView.addOnDigitInputListener(mOnDigitInputListener);
             }
         });
     }

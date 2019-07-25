@@ -301,7 +301,11 @@ public class CodeInputView extends View {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    showKeyboard();
+                    if (mIsEditable) {
+                        showKeyboard();
+                    } else {
+                        hideKeyboard();
+                    }
                 }
             }, 100);
         }
@@ -400,6 +404,17 @@ public class CodeInputView extends View {
         if (inputmethodmanager != null) {
             inputmethodmanager.showSoftInput(this, InputMethodManager.RESULT_UNCHANGED_SHOWN);
             inputmethodmanager.viewClicked(this);
+        }
+    }
+
+    private void hideKeyboard() {
+        if (!mShowKeyboard) {
+            return;
+        }
+
+        InputMethodManager inputmethodmanager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputmethodmanager != null) {
+            inputmethodmanager.hideSoftInputFromWindow(getWindowToken(), 0);
         }
     }
 
@@ -777,6 +792,7 @@ public class CodeInputView extends View {
 
     private void dispatchComplete() {
         mIsEditable = false;
+        hideKeyboard();
         getHandler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -816,6 +832,9 @@ public class CodeInputView extends View {
     @SuppressWarnings("SameParameterValue")
     public void setEditable(boolean value) {
         mIsEditable = value;
+        if (mIsEditable && hasFocus()) {
+            showKeyboard();
+        }
         invalidate();
     }
 
@@ -891,7 +910,11 @@ public class CodeInputView extends View {
     @Override
     public boolean performClick() {
         requestFocus();
-        showKeyboard();
+        if (mIsEditable) {
+            showKeyboard();
+        } else {
+            hideKeyboard();
+        }
         return super.performClick();
     }
 
