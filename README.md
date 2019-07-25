@@ -17,6 +17,10 @@ Based on
 Changelog
 ----------
 
+**v2.1.1**
+ * Add methods to programmatically change colors.
+ * Hide keyboard after code is completed (input is not editable) and show again when change to editable again
+
 **v2.1.0**
  * Added support for IME Options using `app:imeOptions` and other input set-up.
  * Added support for configuration changes state management, now code/error are not lost after configuration change.
@@ -102,7 +106,7 @@ For Gradle
 
 Add dependency
 ```java
-compile 'com.raycoarana.codeinputview:codeinputview:2.1.0'
+compile 'com.raycoarana.codeinputview:codeinputview:2.1.1'
 ```
 
 License
