@@ -11,12 +11,14 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.XmlRes;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
 import android.graphics.Canvas;
@@ -715,6 +717,34 @@ public class CodeInputView extends View {
             mInputContentType.extras = new Bundle();
         }
         return mInputContentType.extras;
+    }
+
+    public void setTextColor(@ColorRes int resId, @Nullable Resources.Theme theme) {
+        setTextColor(ResourcesCompat.getColor(getResources(), resId, theme));
+    }
+
+    public void setTextColor(int color) {
+        mTextColor = color;
+        mTextPaint.setColor(color);
+        invalidate();
+    }
+
+    public int getTextColor() {
+        return mTextColor;
+    }
+
+    public void setErrorTextColor(@ColorRes int resId, @Nullable Resources.Theme theme) {
+        setErrorTextColor(ResourcesCompat.getColor(getResources(), resId, theme));
+    }
+
+    public void setErrorTextColor(int color) {
+        mErrorTextColor = color;
+        mErrorTextPaint.setColor(color);
+        invalidate();
+    }
+
+    public int getErrorTextColor() {
+        return mErrorTextColor;
     }
 
     /**
