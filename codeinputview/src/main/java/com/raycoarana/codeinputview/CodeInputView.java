@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.xmlpull.v1.XmlPullParserException;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.XmlRes;
@@ -352,6 +353,7 @@ public class CodeInputView extends View {
         return staticLayout;
     }
 
+    @SuppressLint("RtlHardcoded")
     private Alignment getAlignment() {
         switch (mErrorTextGravity) {
             case Gravity.CENTER:
@@ -557,6 +559,7 @@ public class CodeInputView extends View {
             }
         }
 
+        @NonNull
         @Override
         public String toString() {
             String str = "CodeInputView.SavedState{" + Integer.toHexString(System.identityHashCode(this));
@@ -599,6 +602,7 @@ public class CodeInputView extends View {
      * @see #getImeOptions
      * @see android.view.inputmethod.EditorInfo
      */
+    @SuppressWarnings("unused")
     public void setImeOptions(int imeOptions) {
         mInputContentType.imeOptions = imeOptions;
     }
@@ -610,6 +614,7 @@ public class CodeInputView extends View {
      * @see #setImeOptions(int)
      * @see android.view.inputmethod.EditorInfo
      */
+    @SuppressWarnings("unused")
     public int getImeOptions() {
         return mInputContentType.imeOptions;
     }
@@ -625,6 +630,7 @@ public class CodeInputView extends View {
      * @see #getImeActionId
      * @see android.view.inputmethod.EditorInfo
      */
+    @SuppressWarnings("unused")
     public void setImeActionLabel(CharSequence label, int actionId) {
         mInputContentType.imeActionLabel = label;
         mInputContentType.imeActionId = actionId;
@@ -636,6 +642,7 @@ public class CodeInputView extends View {
      * @see #setImeActionLabel
      * @see android.view.inputmethod.EditorInfo
      */
+    @SuppressWarnings("unused")
     public CharSequence getImeActionLabel() {
         return mInputContentType.imeActionLabel;
     }
@@ -646,6 +653,7 @@ public class CodeInputView extends View {
      * @see #setImeActionLabel
      * @see android.view.inputmethod.EditorInfo
      */
+    @SuppressWarnings("unused")
     public int getImeActionId() {
         return mInputContentType.imeActionId;
     }
@@ -671,6 +679,7 @@ public class CodeInputView extends View {
      * @see #getPrivateImeOptions()
      * @see EditorInfo#privateImeOptions
      */
+    @SuppressWarnings("unused")
     public void setPrivateImeOptions(String type) {
         mInputContentType.privateImeOptions = type;
     }
@@ -681,6 +690,7 @@ public class CodeInputView extends View {
      * @see #setPrivateImeOptions(String)
      * @see EditorInfo#privateImeOptions
      */
+    @SuppressWarnings("unused")
     public String getPrivateImeOptions() {
         return mInputContentType.privateImeOptions;
     }
@@ -712,6 +722,7 @@ public class CodeInputView extends View {
      * @see #setInputExtras(int)
      * @see EditorInfo#extras
      */
+    @SuppressWarnings("unused")
     public Bundle getInputExtras(boolean create) {
         if (mInputContentType.extras == null && create) {
             mInputContentType.extras = new Bundle();
@@ -719,6 +730,7 @@ public class CodeInputView extends View {
         return mInputContentType.extras;
     }
 
+    @SuppressWarnings("unused")
     public void setTextColor(@ColorRes int resId, @Nullable Resources.Theme theme) {
         setTextColor(ResourcesCompat.getColor(getResources(), resId, theme));
     }
@@ -729,10 +741,12 @@ public class CodeInputView extends View {
         invalidate();
     }
 
+    @SuppressWarnings("unused")
     public int getTextColor() {
         return mTextColor;
     }
 
+    @SuppressWarnings("unused")
     public void setErrorTextColor(@ColorRes int resId, @Nullable Resources.Theme theme) {
         setErrorTextColor(ResourcesCompat.getColor(getResources(), resId, theme));
     }
@@ -743,8 +757,54 @@ public class CodeInputView extends View {
         invalidate();
     }
 
+    @SuppressWarnings("unused")
     public int getErrorTextColor() {
         return mErrorTextColor;
+    }
+
+    @SuppressWarnings("unused")
+    public void setErrorColor(@ColorRes int resId, @Nullable Resources.Theme theme) {
+        setErrorColor(ResourcesCompat.getColor(getResources(), resId, theme));
+    }
+
+    public void setErrorColor(int color) {
+        mErrorColor = color;
+        invalidate();
+    }
+
+    @SuppressWarnings("unused")
+    public int getErrorColor() {
+        return mErrorColor;
+    }
+
+    @SuppressWarnings("unused")
+    public void setUnderlineColor(@ColorRes int resId, @Nullable Resources.Theme theme) {
+        setUnderlineColor(ResourcesCompat.getColor(getResources(), resId, theme));
+    }
+
+    public void setUnderlineColor(int color) {
+        mUnderlineColor = color;
+        invalidate();
+    }
+
+    @SuppressWarnings("unused")
+    public int getUnderlineColor() {
+        return mUnderlineColor;
+    }
+
+    @SuppressWarnings("unused")
+    public void setUnderlineSelectedColor(@ColorRes int resId, @Nullable Resources.Theme theme) {
+        setUnderlineSelectedColor(ResourcesCompat.getColor(getResources(), resId, theme));
+    }
+
+    public void setUnderlineSelectedColor(int color) {
+        mUnderlineSelectedColor = color;
+        invalidate();
+    }
+
+    @SuppressWarnings("unused")
+    public int getUnderlineSelectedColor() {
+        return mUnderlineSelectedColor;
     }
 
     /**
@@ -883,6 +943,7 @@ public class CodeInputView extends View {
      *
      * @param listener listener to remove
      */
+    @SuppressWarnings("unused")
     public void removeOnCompleteListener(OnCodeCompleteListener listener) {
         mInputCompletedListeners.remove(listener);
     }
@@ -902,6 +963,7 @@ public class CodeInputView extends View {
      *
      * @param listener listener to remove
      */
+    @SuppressWarnings("unused")
     public void removeOnDigitInputListener(OnDigitInputListener listener) {
         mDigitInputListeners.remove(listener);
     }
@@ -1152,7 +1214,7 @@ public class CodeInputView extends View {
      *
      * @param enabled true to show password while typing or false to not show never
      */
-    @SuppressWarnings("SameParameterValue")
+    @SuppressWarnings({"unused", "SameParameterValue"})
     public void setShowPasswordWhileTyping(boolean enabled) {
         mShowPasswordWhileTyping = enabled;
 
@@ -1176,7 +1238,7 @@ public class CodeInputView extends View {
      *
      * @param timeInMillis true to hide the code or false the display it.
      */
-    @SuppressWarnings("SameParameterValue")
+    @SuppressWarnings({"unused", "SameParameterValue"})
     public void setTimeCharacterIsShownWhileTyping(int timeInMillis) {
         mTimeCharacterIsShownWhileTypingInMillis = timeInMillis;
         mTimeCharacterIsShownWhileTypingInNano = TimeUnit.MILLISECONDS.toNanos(timeInMillis);
@@ -1220,7 +1282,7 @@ public class CodeInputView extends View {
      *
      * @param value true to show the keyboard when focus gained or tapped, false to not show it
      */
-    @SuppressWarnings("SameParameterValue")
+    @SuppressWarnings({"unused", "SameParameterValue"})
     public void setShowKeyboard(boolean value) {
         mShowKeyboard = value;
         invalidate();
