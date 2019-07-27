@@ -1,5 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply from: '../scripts/gradle-mvn-push.gradle'
+apply plugin: 'com.facebook.testing.screenshot'
 
 android {
     compileSdkVersion buildConfig.compileSdkVerion
@@ -8,7 +11,7 @@ android {
     defaultConfig {
         minSdkVersion buildConfig.minSdkVersion
         targetSdkVersion buildConfig.targetSdkVersion
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.raycoarana.codeinputview.core.ScreenshotTestRunner"
     }
     buildTypes {
         release {
@@ -20,6 +23,7 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'

@@ -37,6 +37,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -318,6 +319,17 @@ public class CodeInputView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        updateGravity(w, h);
+    }
+
+    private void updateGravity() {
+        if (getWidth() > 0 && getHeight() > 0) {
+            updateGravity(getWidth(), getHeight());
+        }
+        forceLayout();
+    }
+
+    private void updateGravity(int w, int h) {
         Rect container = new Rect(0, 0, w, h);
         Rect destinationRect = new Rect();
 
@@ -327,6 +339,36 @@ public class CodeInputView extends View {
         mXOffset = destinationRect.left;
         mUnderLineY = (int) (destinationRect.top + mTextMarginBottom + mTextPaint.getFontSpacing());
         initUnderline();
+    }
+
+    /**
+     * Set the gravity to apply to the code digits
+     *
+     * @param value one of {@link android.view.Gravity} values
+     */
+    public void setGravity(int value) {
+        mGravity = value;
+        updateGravity();
+    }
+
+    public int getGravity() {
+        return mGravity;
+    }
+
+    /**
+     * Set the error text gravity
+     *
+     * @param value one of {@link android.view.Gravity#LEFT}, {@link android.view.Gravity#RIGHT}
+     *              and {@link android.view.Gravity#CENTER} values. By default {@link android.view.Gravity#CENTER}
+     *              will be used
+     */
+    public void setErrorTextGravity(int value) {
+        mErrorTextGravity = value;
+        updateGravity();
+    }
+
+    public int getErrorTextGravity() {
+        return mErrorTextGravity;
     }
 
     private StaticLayout buildErrorTextLayout(int width) {
@@ -386,7 +428,7 @@ public class CodeInputView extends View {
 
         if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
             int desiredHeight = getDesiredHeight(buildErrorTextLayout(width));
-            height = Math.min(desiredHeight, height);
+            height = height > 0 ? Math.min(desiredHeight, height) : desiredHeight;
         }
         setMeasuredDimension(width, height);
     }
@@ -769,6 +811,7 @@ public class CodeInputView extends View {
 
     public void setErrorColor(int color) {
         mErrorColor = color;
+        updateErrorColorAnimator();
         invalidate();
     }
 
@@ -784,7 +827,13 @@ public class CodeInputView extends View {
 
     public void setUnderlineColor(int color) {
         mUnderlineColor = color;
+        mUnderlinePaint.setColor(mUnderlineColor);
+        updateErrorColorAnimator();
         invalidate();
+    }
+
+    private void updateErrorColorAnimator() {
+        mErrorColorAnimator.setObjectValues(mUnderlineColor, mErrorColor);
     }
 
     @SuppressWarnings("unused")
@@ -799,6 +848,7 @@ public class CodeInputView extends View {
 
     public void setUnderlineSelectedColor(int color) {
         mUnderlineSelectedColor = color;
+        mUnderlineSelectedPaint.setColor(mUnderlineSelectedColor);
         invalidate();
     }
 
@@ -1130,7 +1180,7 @@ public class CodeInputView extends View {
         if (width > 0) {
             mErrorTextLayout = buildErrorTextLayout(width);
         }
-        invalidate();
+        forceLayout();
     }
 
     /**
@@ -1307,8 +1357,77 @@ public class CodeInputView extends View {
     public void setLengthOfCode(int value) {
         mLengthOfCode = value;
         initDataStructures();
-        initUnderline();
-        invalidate();
+        updateGravity(getWidth(), getHeight());
+    }
+
+    public void setTextSize(int unit, float size) {
+        mTextSize = TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics());
+        mTextPaint.setTextSize(mTextSize);
+        updateHideCharactersAnimator();
+        updateGravity();
+    }
+
+    public float getTextSize() {
+        return mTextSize;
+    }
+
+    public void setErrorTextSize(int unit, float size) {
+        mErrorTextSize = TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics());
+        mErrorTextPaint.setTextSize(mErrorTextSize);
+        updateGravity();
+    }
+
+    public float getErrorTextSize() {
+        return mErrorTextSize;
+    }
+
+    public void setTextMarginBottom(int unit, float size) {
+        mTextMarginBottom = TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics());
+        updateHideCharactersAnimator();
+        updateGravity();
+        forceLayout();
+    }
+
+    private void updateHideCharactersAnimator() {
+        mHideCharactersAnimator.setObjectValues(0, mTextPaint.getFontSpacing() + mTextMarginBottom);
+    }
+
+    public float getTextMarginBottom() {
+        return mTextMarginBottom;
+    }
+
+    public void setErrorTextMarginTop(int unit, float size) {
+        mErrorTextMarginTop = TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics());
+        updateGravity();
+        forceLayout();
+    }
+
+    public float getErrorTextMarginTop() {
+        return mErrorTextMarginTop;
+    }
+
+    public void setErrorTextMarginLeft(int unit, float size) {
+        mErrorTextMarginLeft = TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics());
+        updateGravity();
+        forceLayout();
+    }
+
+    public float getErrorTextMarginLeft() {
+        return mErrorTextMarginLeft;
+    }
+
+    public void setErrorTextMarginRight(int unit, float size) {
+        mErrorTextMarginRight = TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics());
+        updateGravity();
+        forceLayout();
+    }
+
+    public float getErrorTextMarginRight() {
+        return mErrorTextMarginRight;
+    }
+
+    public void setAnimateOnComplete(boolean value) {
+        mAnimateOnComplete = value;
     }
 
     /**
