@@ -17,6 +17,9 @@ Based on
 Changelog
 ----------
 
+**v2.1.2**
+ * Bug fixing related to layout calculations when any property is updated programmatically.
+
 **v2.1.1**
  * Add methods to programmatically change colors.
  * Hide keyboard after code is completed (input is not editable) and show again when change to editable again
