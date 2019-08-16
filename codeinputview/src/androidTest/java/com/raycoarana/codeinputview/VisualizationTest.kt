@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.KeyEvent
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.rule.UiThreadTestRule
 import com.facebook.testing.screenshot.Screenshot
@@ -256,6 +257,18 @@ class VisualizationTest {
         viewHelper.layout()
 
         Screenshot.snap(view).record()
+    }
+
+    @Test
+    fun delChar() {
+        givenViewInitializedWithDefaultAttributes()
+        view.code = "134"
+        givenViewIsMeasuredWithExactWidth()
+
+        Screenshot.snap(view).setName("delChar_beforeDelete").record()
+        view.onKeyDown(KeyEvent.KEYCODE_DEL, null)
+
+        Screenshot.snap(view).setName("delChar_afterDelete").record()
     }
 
     private fun givenAllColorsAreChanged() {

@@ -17,6 +17,9 @@ Based on
 Changelog
 ----------
 
+**v2.1.3**
+ * Fix bug not redrawing after delete a char
+
 **v2.1.2**
  * Bug fixing related to layout calculations when any property is updated programmatically.
 

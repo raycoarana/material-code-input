@@ -884,6 +884,7 @@ public class CodeInputView extends View {
             restoreState();
             notifyDeleteDigit();
             clearError();
+            invalidate();
         }
         return canDelete;
     }
