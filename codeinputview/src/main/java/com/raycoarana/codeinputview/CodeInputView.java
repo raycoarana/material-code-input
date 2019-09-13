@@ -383,7 +383,7 @@ public class CodeInputView extends View {
                     .build();
         } else {
             staticLayout = new StaticLayout(
-                    mErrorMessage,
+                    errorMessage,
                     textPaint,
                     textWidth,
                     alignment,
