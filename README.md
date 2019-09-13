@@ -17,6 +17,9 @@ Based on
 Changelog
 ----------
 
+**v2.1.4**
+ * Fix NPE in pre-M when dealing with null error message. Thanks to @gmerinojimenez
+
 **v2.1.3**
  * Fix bug not redrawing after delete a char
 
