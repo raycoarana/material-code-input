@@ -873,6 +873,7 @@ public class CodeInputView extends View {
         if (canDelete) {
             int length = mSpannableSupportBuilder.length();
             mSpannableSupportBuilder.delete(length - 1, length);
+            invalidate();
         }
         return canDelete;
     }
