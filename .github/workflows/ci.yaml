@@ -8,6 +8,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v4
         
       - name: Set-up JDK 8
@@ -19,4 +20,3 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-
