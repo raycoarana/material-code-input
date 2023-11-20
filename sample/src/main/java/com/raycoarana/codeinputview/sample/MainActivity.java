@@ -75,7 +75,17 @@ public class MainActivity extends AppCompatActivity {
 		});
 
 		final CodeInputView gravityView = findViewById(R.id.gravity);
-		gravityView.setError("Really big error message that will need to be wrapped in several lines so we need to properly measure and layout it.");
+		gravityView.addOnDigitInputListener(new OnDigitInputListener() {
+			@Override
+			public void onInput(char inputDigit) {
+				gravityView.setError("Really big error message that will need to be wrapped in several lines so we need to properly measure and layout it.");
+			}
+
+			@Override
+			public void onDelete() {
+				gravityView.setError(null);
+			}
+		});
 		gravityView.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(CodeInputView v, int actionId, KeyEvent event) {
