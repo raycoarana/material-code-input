@@ -8,6 +8,9 @@ jobs:
   build:
     name: Build
     runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [28]
     steps:
       - uses: actions/checkout@v4
         
@@ -21,9 +24,36 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew test
 
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
+      - name: Prepare for Facebook screenshot tests lib
+        run: |
+          pip install mock
+          pip install Pillow
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
       - name: Run Screenshot tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 28
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: ./gradlew verifyDebugAndroidTestScreenshotTest
 
