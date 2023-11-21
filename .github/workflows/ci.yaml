@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [28]
+    steps:
+      - uses: actions/checkout@v4
+        
+      - name: Set-up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build with Gradle
+        run: ./gradlew check
+
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}
+
+      - name: Prepare for Facebook screenshot tests lib
+        run: |
+          pip install mock
+          pip install Pillow==9.1.1
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          profile: pixel_3a
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run Screenshot tests
+        id: screenshot-tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          profile: pixel_3a
+          script: ./gradlew verifyDebugAndroidTestScreenshotTest
+
+      - uses: actions/upload-artifact@v3
+        if: failure() && steps.screenshot-tests.outcome == 'failure'
+        with:
+          name: screenshotTestsReport
+          path: codeinputview/build/screenshotsDebugAndroidTest/
+
+      - name: Record Screenshot tests
+        if: failure() && steps.screenshot-tests.outcome == 'failure'
+        id: record-screenshot-tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          profile: pixel_3a
+          script: ./gradlew recordDebugAndroidTestScreenshotTest
+
+      - uses: actions/upload-artifact@v3
+        if: failure() && steps.record-screenshot-tests.outcome == 'success'
+        with:
+          name: actualScreenshotResults
+          path: codeinputview/screenshots/
