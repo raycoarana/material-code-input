@@ -60,11 +60,6 @@ jobs:
           profile: pixel_3a
           script: ./gradlew verifyDebugAndroidTestScreenshotTest
 
-      - name: Prepare screenshots results
-        if: failure() && steps.screenshot-tests.outcome == 'failure'
-        run: |
-          tar -zcvf screenshotReport.tar.gz codeinputview/build/screenshotsDebugAndroidTest
-
       - uses: actions/upload-artifact@v3
         with:
           name: screenshotTestsResult
