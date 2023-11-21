@@ -33,11 +33,6 @@ jobs:
             ~/.android/adb*
           key: avd-${{ matrix.api-level }}
 
-      - name: Ensure python 3.x
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10' 
-
       - name: Prepare for Facebook screenshot tests lib
         run: |
           pip install mock
@@ -84,7 +79,7 @@ jobs:
           script: ./gradlew recordDebugAndroidTestScreenshotTest
 
       - uses: actions/upload-artifact@v3
-        if: failure() && steps.screenshot-tests.outcome == 'failure'
+        if: failure() && steps.record-screenshot-tests.outcome == 'success'
         with:
           name: actualScreenshotResults
           path: codeinputview/screenshots/
