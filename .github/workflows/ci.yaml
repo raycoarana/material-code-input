@@ -61,6 +61,7 @@ jobs:
           script: ./gradlew verifyDebugAndroidTestScreenshotTest
 
       - uses: actions/upload-artifact@v3
+        if: failure() && steps.screenshot-tests.outcome == 'failure'
         with:
           name: screenshotTestsResult
           path: codeinputview/build/screenshotsDebugAndroidTest/
