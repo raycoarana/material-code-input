@@ -1181,7 +1181,7 @@ public class CodeInputView extends View {
         if (width > 0) {
             mErrorTextLayout = buildErrorTextLayout(width);
         }
-        forceLayout();
+        requestLayout();
     }
 
     /**
