@@ -46,7 +46,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
-          target: google_apis
+          arch: x86_64
           profile: pixel_3a
           script: echo "Generated AVD snapshot for caching."
 
@@ -58,7 +58,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          target: google_apis
+          arch: x86_64
           profile: pixel_3a
           script: ./gradlew verifyDebugAndroidTestScreenshotTest
 
