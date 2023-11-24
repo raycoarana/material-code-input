@@ -6,9 +6,11 @@ plugins {
 
 android {
     namespace = "com.raycoarana.codeinputview"
+
     compileSdk = BuildConfig.compileSdkVerion
 
     defaultConfig {
+        testApplicationId = "com.raycoarana.codeinputview"
         minSdk = BuildConfig.minSdkVersion
 
         testInstrumentationRunner = "com.raycoarana.codeinputview.core.ScreenshotTestRunner"
