@@ -81,8 +81,8 @@ public class CodeInputView extends View {
     private int mUnderlineColor;
     private int mUnderlineSelectedColor;
     private int mTextColor;
-    private List<OnCodeCompleteListener> mInputCompletedListeners = new ArrayList<>();
-    private List<OnDigitInputListener> mDigitInputListeners = new ArrayList<>();
+    private final List<OnCodeCompleteListener> mInputCompletedListeners = new ArrayList<>();
+    private final List<OnDigitInputListener> mDigitInputListeners = new ArrayList<>();
     private boolean mIsEditable = true;
     private int mInputType = INPUT_TYPE_NUMERIC;
     private int mUnderLineY;
@@ -102,7 +102,7 @@ public class CodeInputView extends View {
     private int mOnCompleteEventDelay;
     private boolean mInPasswordMode;
     private boolean mShowPasswordWhileTyping;
-    private char mPasswordCharacter = '\u2022';
+    private char mPasswordCharacter = '•';
     private boolean mShowKeyboard = true;
     private long mTimeCharacterIsShownWhileTypingInNano;
     private int mTimeCharacterIsShownWhileTypingInMillis = DEFAULT_TIME_CHARACTER_IS_SHOWN_WHILE_TYPING;
@@ -110,8 +110,8 @@ public class CodeInputView extends View {
     private int mGravity;
     private int mErrorTextGravity;
     private StaticLayout mErrorTextLayout;
-    private InputContentType mInputContentType = new InputContentType();
-    private SpannableStringBuilder mSpannableSupportBuilder = new SpannableStringBuilder();
+    private final InputContentType mInputContentType = new InputContentType();
+    private final SpannableStringBuilder mSpannableSupportBuilder = new SpannableStringBuilder();
 
     static class InputContentType {
         int imeOptions = EditorInfo.IME_NULL;
@@ -237,9 +237,7 @@ public class CodeInputView extends View {
         if (inputExtrasResId != 0) {
             try {
                 setInputExtras(inputExtrasResId);
-            } catch (XmlPullParserException e) {
-                Log.w(TAG, "Failure reading input extras", e);
-            } catch (IOException e) {
+            } catch (XmlPullParserException | IOException e) {
                 Log.w(TAG, "Failure reading input extras", e);
             }
         }
@@ -302,14 +300,11 @@ public class CodeInputView extends View {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         if (gainFocus) {
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (mIsEditable) {
-                        showKeyboard();
-                    } else {
-                        hideKeyboard();
-                    }
+            postDelayed(() -> {
+                if (mIsEditable) {
+                    showKeyboard();
+                } else {
+                    hideKeyboard();
                 }
             }, 100);
         }
@@ -317,8 +312,8 @@ public class CodeInputView extends View {
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
+    protected void onSizeChanged(int w, int h, int oldWidth, int oldHeight) {
+        super.onSizeChanged(w, h, oldWidth, oldHeight);
         updateGravity(w, h);
     }
 
@@ -351,6 +346,7 @@ public class CodeInputView extends View {
         updateGravity();
     }
 
+    /** @noinspection unused*/
     public int getGravity() {
         return mGravity;
     }
@@ -367,6 +363,7 @@ public class CodeInputView extends View {
         updateGravity();
     }
 
+    /** @noinspection unused*/
     public int getErrorTextGravity() {
         return mErrorTextGravity;
     }
@@ -639,7 +636,7 @@ public class CodeInputView extends View {
      * Change the editor type integer associated with the mCode view, which
      * is reported to an Input Method Editor (IME) with {@link EditorInfo#imeOptions}
      * when it has focus.
-     *
+     * <br/>
      * Ref android.R.styleable#TextView_imeOptions
      * @see #getImeOptions
      * @see android.view.inputmethod.EditorInfo
@@ -665,7 +662,7 @@ public class CodeInputView extends View {
      * Change the custom IME action associated with the mCode view, which
      * will be reported to an IME with {@link EditorInfo#actionLabel}
      * and {@link EditorInfo#actionId} when it has focus.
-     *
+     * <br/>
      * Ref android.R.styleable#TextView_imeActionLabel
      * Ref android.R.styleable#TextView_imeActionId
      * @see #getImeActionLabel
@@ -716,7 +713,7 @@ public class CodeInputView extends View {
      * Set the private content type of the mCode, which is the
      * {@link EditorInfo#privateImeOptions EditorInfo.privateImeOptions}
      * field that will be filled in when creating an input connection.
-     *
+     * <br/>
      * Ref android.R.styleable#TextView_privateImeOptions
      * @see #getPrivateImeOptions()
      * @see EditorInfo#privateImeOptions
@@ -743,7 +740,7 @@ public class CodeInputView extends View {
      * Bundle that will be filled in when creating an input connection.  The
      * given integer is the resource identifier of an XML resource holding an
      * {android.R.styleable#InputExtras &lt;input-extras&gt;} XML tree.
-     *
+     * <br/>
      * Ref android.R.styleable#TextView_editorExtras
      * @see #getInputExtras(boolean)
      * @see EditorInfo#extras
@@ -914,12 +911,7 @@ public class CodeInputView extends View {
         if (mIsEditable && isValid && mSpannableSupportBuilder.length() < mLengthOfCode) {
             mSpannableSupportBuilder.append(typedChar);
             mLastTimeTypedInNano = System.nanoTime();
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    invalidate();
-                }
-            }, mTimeCharacterIsShownWhileTypingInMillis);
+            postDelayed(this::invalidate, mTimeCharacterIsShownWhileTypingInMillis);
             invalidate();
             notifyInputDigit(typedChar);
             if (mSpannableSupportBuilder.length() == mLengthOfCode) {
@@ -934,15 +926,12 @@ public class CodeInputView extends View {
     private void dispatchComplete() {
         mIsEditable = false;
         hideKeyboard();
-        getHandler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mAnimateOnComplete) {
-                    mReductionAnimator.start();
-                    mHideCharactersAnimator.start();
-                }
-                notifyCompleted();
+        getHandler().postDelayed(() -> {
+            if (mAnimateOnComplete) {
+                mReductionAnimator.start();
+                mHideCharactersAnimator.start();
             }
+            notifyCompleted();
         }, mOnCompleteEventDelay);
     }
 
@@ -1111,7 +1100,7 @@ public class CodeInputView extends View {
     }
 
     /**
-     * Gets the current code as an String
+     * Gets the current code as a String
      *
      * @return the code
      */
@@ -1368,6 +1357,7 @@ public class CodeInputView extends View {
         updateGravity();
     }
 
+    /** @noinspection unused*/
     public float getTextSize() {
         return mTextSize;
     }
@@ -1378,6 +1368,7 @@ public class CodeInputView extends View {
         updateGravity();
     }
 
+    /** @noinspection unused*/
     public float getErrorTextSize() {
         return mErrorTextSize;
     }
@@ -1393,6 +1384,7 @@ public class CodeInputView extends View {
         mHideCharactersAnimator.setObjectValues(0, mTextPaint.getFontSpacing() + mTextMarginBottom);
     }
 
+    /** @noinspection unused*/
     public float getTextMarginBottom() {
         return mTextMarginBottom;
     }
@@ -1403,6 +1395,7 @@ public class CodeInputView extends View {
         forceLayout();
     }
 
+    /** @noinspection unused*/
     public float getErrorTextMarginTop() {
         return mErrorTextMarginTop;
     }
@@ -1413,6 +1406,7 @@ public class CodeInputView extends View {
         forceLayout();
     }
 
+    /** @noinspection unused*/
     public float getErrorTextMarginLeft() {
         return mErrorTextMarginLeft;
     }
@@ -1423,6 +1417,7 @@ public class CodeInputView extends View {
         forceLayout();
     }
 
+    /** @noinspection unused*/
     public float getErrorTextMarginRight() {
         return mErrorTextMarginRight;
     }
