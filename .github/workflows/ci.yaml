@@ -35,8 +35,8 @@ jobs:
 
       - name: Prepare for Facebook screenshot tests lib
         run: |
-          pip install mock
-          pip install Pillow==9.1.1
+          pip3 install mock
+          pip3 install Pillow==9.1.1
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
