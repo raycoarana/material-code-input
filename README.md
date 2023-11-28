@@ -17,6 +17,9 @@ Based on
 Changelog
 ----------
 
+**v2.1.5**
+ * Fix layout when error text is bigger than the widget and is set after initial layout. Thanks to @jeslat
+
 **v2.1.4**
  * Fix NPE in pre-M when dealing with null error message. Thanks to @gmerinojimenez
 
@@ -115,7 +118,7 @@ For Gradle
 
 Add dependency
 ```java
-compile 'com.raycoarana.codeinputview:codeinputview:2.1.1'
+compile 'com.raycoarana.codeinputview:codeinputview:2.1.5'
 ```
 
 License
