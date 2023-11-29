@@ -60,7 +60,7 @@ jobs:
           disable-animations: true
           arch: x86_64
           profile: pixel_3a
-          script: ./gradlew verifyDebugAndroidTestScreenshotTest
+          script: ./gradlew executeScreenshotTests
 
       - uses: actions/upload-artifact@v3
         if: failure() && steps.screenshot-tests.outcome == 'failure'
@@ -78,7 +78,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           profile: pixel_3a
-          script: ./gradlew recordDebugAndroidTestScreenshotTest
+          script: ./gradlew executeScreenshotTests -Precord
 
       - uses: actions/upload-artifact@v3
         if: failure() && steps.record-screenshot-tests.outcome == 'success'
