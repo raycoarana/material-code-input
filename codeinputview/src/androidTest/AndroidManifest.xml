@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.raycoarana.codeinputview">
+          android:sharedUserId="com.raycoarana.codeinputview.uid">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 

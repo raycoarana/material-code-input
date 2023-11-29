@@ -1,7 +1,7 @@
 Material Code input
 -----------------
 
-A material style input to put security codes like those two factor authentication codes received by SMS.
+A material style input to put security codes like those two-factor authentication codes received by SMS.
 
 ![Demo Screenshot](./art/CodeInputView.gif)
 
@@ -16,6 +16,9 @@ Based on
 
 Changelog
 ----------
+
+**v3.0.0**
+* General project revamp to use Gradle 8 and Kotlin DSL. Min SDK increased to API 21.
 
 **v2.1.5**
  * Fix layout when error text is bigger than the widget and is set after initial layout. Thanks to @jeslat
@@ -47,7 +50,7 @@ Changelog
 How to use
 ----------
 
-Minimal SDK Version 14
+Minimum SDK Version 21
 
 Usage with default colors (default digits are 6) without finish animation
 
@@ -118,13 +121,13 @@ For Gradle
 
 Add dependency
 ```java
-compile 'com.raycoarana.codeinputview:codeinputview:2.1.5'
+compile 'com.raycoarana.codeinputview:codeinputview:3.0.0'
 ```
 
 License
 -------
 
-    Copyright 2016 Rayco Araña
+    Copyright 2016-2023 Rayco Araña
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

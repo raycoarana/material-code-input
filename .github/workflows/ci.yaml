@@ -10,14 +10,14 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        api-level: [28]
+        api-level: [21] #, 28, 34]
     steps:
       - uses: actions/checkout@v4
         
-      - name: Set-up JDK 8
+      - name: Set-up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '8'
+          java-version: '17'
           distribution: 'temurin'
           cache: gradle
 
@@ -35,8 +35,8 @@ jobs:
 
       - name: Prepare for Facebook screenshot tests lib
         run: |
-          pip install mock
-          pip install Pillow==9.1.1
+          pip3 install mock
+          pip3 install Pillow==9.1.1
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -46,6 +46,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
+          arch: x86_64
           profile: pixel_3a
           script: echo "Generated AVD snapshot for caching."
 
@@ -57,8 +58,9 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
+          arch: x86_64
           profile: pixel_3a
-          script: ./gradlew verifyDebugAndroidTestScreenshotTest
+          script: ./gradlew executeScreenshotTests
 
       - uses: actions/upload-artifact@v3
         if: failure() && steps.screenshot-tests.outcome == 'failure'
@@ -76,7 +78,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           profile: pixel_3a
-          script: ./gradlew recordDebugAndroidTestScreenshotTest
+          script: ./gradlew executeScreenshotTests -Precord
 
       - uses: actions/upload-artifact@v3
         if: failure() && steps.record-screenshot-tests.outcome == 'success'

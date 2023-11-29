@@ -6,21 +6,17 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.test.rule.UiThreadTestRule
 import com.facebook.testing.screenshot.Screenshot
 import com.facebook.testing.screenshot.ViewHelpers
+import com.karumi.shot.ScreenshotTest
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
-class VisualizationTest {
+class VisualizationTest : ScreenshotTest {
 
     private lateinit var viewHelper: ViewHelpers
     private lateinit var view: CodeInputView
     private lateinit var context: Context
-
-    @get:Rule
-    var uiThreadRule = UiThreadTestRule()
 
     @Before
     fun prepareContext() {
@@ -87,6 +83,7 @@ class VisualizationTest {
         view.code = "abc34"
 
         Screenshot.snap(view).record()
+
     }
 
     @Test
