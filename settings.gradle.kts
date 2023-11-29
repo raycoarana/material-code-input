@@ -6,8 +6,8 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id == "com.facebook.testing.screenshot") {
-                useModule("com.facebook.testing.screenshot:plugin:0.15.0")
+            if (requested.id.id == "shot") {
+                useModule("com.karumi:shot:6.0.0")
             }
         }
     }

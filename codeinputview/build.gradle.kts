@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.facebook.testing.screenshot")
+    id("shot")
 }
 
 android {
@@ -13,7 +13,7 @@ android {
         testApplicationId = "com.raycoarana.codeinputview"
         minSdk = BuildConfig.minSdkVersion
 
-        testInstrumentationRunner = "com.raycoarana.codeinputview.core.ScreenshotTestRunner"
+        testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
     buildTypes {
@@ -34,6 +34,8 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
+
+    androidTestImplementation("com.facebook.testing.screenshot:core:0.15.0")
 
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test:rules:1.5.0")
